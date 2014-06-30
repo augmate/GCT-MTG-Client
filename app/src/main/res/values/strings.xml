@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">gct_mtg_client</string>
+    <string name="voice_trigger">meeting</string>
+
+</resources>
