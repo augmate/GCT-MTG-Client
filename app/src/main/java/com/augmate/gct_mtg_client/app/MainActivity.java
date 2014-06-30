@@ -2,8 +2,7 @@ package com.augmate.gct_mtg_client.app;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.augmate.gct_mtg_client.R;
 
 public class MainActivity extends Activity {
 

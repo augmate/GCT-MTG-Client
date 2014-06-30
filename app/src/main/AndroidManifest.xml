@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.augmate.gct_mtg_client.app" >
+    package="com.augmate.gct_mtg_client">
+
+    <uses-permission android:name="com.google.android.glass.permission.DEVELOPMENT" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:label="@string/app_name">
         <activity
-            android:name="com.augmate.gct_mtg_client.app.MainActivity"
-            android:label="@string/app_name" >
+            android:name="com.augmate.gct_mtg_client.app.MainActivity">
             <intent-filter>
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
             </intent-filter>
