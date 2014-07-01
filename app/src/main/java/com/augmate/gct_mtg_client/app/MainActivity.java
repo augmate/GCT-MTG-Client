@@ -1,21 +1,27 @@
 package com.augmate.gct_mtg_client.app;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.segment.android.Analytics;
+import com.segment.android.TrackedActivity;
+import com.segment.android.models.Props;
 
-public class MainActivity extends Activity {
+public class MainActivity extends TrackedActivity {
+
+    long mScanStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mScanStart = SystemClock.uptimeMillis();
         new IntentIntegrator(this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
     }
 
@@ -37,6 +43,9 @@ public class MainActivity extends Activity {
                 finish();
             }
 
+            Analytics.track("QR Code Scan", new Props(
+                    "value", SystemClock.uptimeMillis() - mScanStart
+            ));
         }
     }
 }
