@@ -21,13 +21,15 @@ public class MeetingBooker {
     public boolean bookNow() {
         boolean wasSuccess = true;
 
-        DateTime start = new DateTime(new org.joda.time.DateTime().now().toDate());
-        DateTime end = new DateTime(new org.joda.time.DateTime().now().plusMinutes(30).toDate());
+        org.joda.time.DateTime roundedStartTime = getRoundedStartTime();
+
+        EventDateTime startTime = getEventDateTime(roundedStartTime);
+        EventDateTime endTime = getEventDateTime(roundedStartTime.plusMinutes(30));
 
         Event event = new Event()
                 .setSummary("Booking")
-                .setStart(new EventDateTime().setDateTime(start))
-                .setEnd(new EventDateTime().setDateTime(end));
+                .setStart(startTime)
+                .setEnd(endTime);
 
         try {
             calendarService.events().insert("nexweb.com_tkselniqr1e6sgn207optnhil0@group.calendar.google.com", event).execute();
@@ -38,5 +40,14 @@ public class MeetingBooker {
         }
 
         return wasSuccess;
+    }
+
+    private EventDateTime getEventDateTime(org.joda.time.DateTime roundedStartTime) {
+        return new EventDateTime().setDateTime(new DateTime(roundedStartTime.toDate()));
+    }
+
+    private org.joda.time.DateTime getRoundedStartTime() {
+        org.joda.time.DateTime now = new org.joda.time.DateTime().now();
+        return now.minusMinutes(now.getMinuteOfHour() % 30);
     }
 }
