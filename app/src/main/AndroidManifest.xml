@@ -26,7 +26,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
         <activity
-            android:name="com.augmate.gct_mtg_client.app.BeaconActivity">
+            android:name="com.augmate.gct_mtg_client.app.MainActivity">
             <intent-filter>
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
             </intent-filter>
