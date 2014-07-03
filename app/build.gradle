@@ -33,6 +33,10 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    compile 'com.google.http-client:google-http-client-jackson:1.18.0-rc'
+    compile 'com.google.apis:google-api-services-calendar:v3-rev84-1.18.0-rc'
+    compile 'com.google.apis:google-api-services-oauth2:v2-rev70-1.18.0-rc'
+    compile 'com.google.api-client:google-api-client-android:1.18.0-rc'
     compile 'com.google.api-client:google-api-client:1.18.0-rc'
     compile 'com.squareup.retrofit:retrofit:1.6.0'
     compile 'com.google.zxing:core:3.0.1'
