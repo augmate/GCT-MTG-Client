@@ -10,11 +10,9 @@ import java.io.IOException;
 
 public class MeetingBooker {
 
-
     private Calendar calendarService;
 
     public MeetingBooker(Calendar calendarService) {
-
         this.calendarService = calendarService;
     }
 

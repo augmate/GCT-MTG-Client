@@ -16,8 +16,6 @@ import com.segment.android.Analytics;
 import com.segment.android.TrackedActivity;
 import com.segment.android.models.Props;
 
-import java.io.InputStreamReader;
-
 public class MainActivity extends TrackedActivity {
 
     long mScanStart;
@@ -30,10 +28,7 @@ public class MainActivity extends TrackedActivity {
         new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Credential credential = new CredentialGen(
-                            MainActivity.this,
-                            new InputStreamReader(getResources().openRawResource(R.raw.secret))
-                    ).getCreditials() ;
+                    Credential credential = new CredentialGen(MainActivity.this).getCreditials() ;
 
                     Calendar calendarService = new Calendar.Builder(
                             AndroidHttp.newCompatibleTransport(), new JacksonFactory(), credential)
