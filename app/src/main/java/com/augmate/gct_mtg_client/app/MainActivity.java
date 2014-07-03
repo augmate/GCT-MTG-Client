@@ -16,13 +16,10 @@ import com.segment.android.Analytics;
 import com.segment.android.TrackedActivity;
 import com.segment.android.models.Props;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class MainActivity extends TrackedActivity {
 
-    public static final String AUTHORIZATION_CODE = "4/C11Z3U0yuhg2QJWaStdR2b7MIYzA.UrlwXH6vLfQb3oEBd8DOtNCfVtf0jQI";
     long mScanStart;
 
     @Override
@@ -33,29 +30,17 @@ public class MainActivity extends TrackedActivity {
         new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    Credential credential = new CredentialGen(
+                            MainActivity.this,
+                            new InputStreamReader(getResources().openRawResource(R.raw.secret))
+                    ).getCreditials() ;
 
-                    try {
-                        InputStream inputStream = getResources().openRawResource(R.raw.secret);
-                        OAuth.setReader(new InputStreamReader(inputStream));
-                        OAuth.setContext(MainActivity.this);
+                    Calendar calendarService = new Calendar.Builder(
+                            AndroidHttp.newCompatibleTransport(), new JacksonFactory(), credential)
+                            .setApplicationName("Google-CalendarAndroidSample/1.0")
+                            .build();
 
-//                        String authorizationUrl = OAuth.getAuthorizationUrl("johny@augmate.com", "");
-//                        Log.d("com.augmate.auth2", authorizationUrl);
-
-                        Credential credential = OAuth.getCredentials(AUTHORIZATION_CODE);
-
-                        Calendar calendarService = new Calendar.Builder(
-                                AndroidHttp.newCompatibleTransport(), new JacksonFactory(), credential)
-                                .setApplicationName("Google-CalendarAndroidSample/1.0")
-                                .build();
-
-                        new MeetingBooker(calendarService).bookNow();
-
-                    } catch (OAuth.CodeExchangeException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    new MeetingBooker(calendarService).bookNow();
                 }
             }).start();
 
