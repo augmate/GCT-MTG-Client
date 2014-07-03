@@ -119,17 +119,10 @@ class OAuth {
      * @param credentials The OAuth 2.0 credentials to store.
      */
     static void storeCredentials(Credential credentials) {
-
-
         SharedPreferences.Editor editor = context.getSharedPreferences(context.getPackageName(), context.MODE_PRIVATE).edit();
         editor.putString("access_token", credentials.getAccessToken());
         editor.putString("refresh_token", credentials.getRefreshToken());
         editor.apply();
-
-        // TODO: Implement this method to work with your database.
-        // Store the credentials.getAccessToken() and credentials.getRefreshToken()
-        // string values in your database.
-        // throw new UnsupportedOperationException();
     }
 
     /**

@@ -1,0 +1,53 @@
+package com.augmate.gct_mtg_client.app;
+
+import android.util.Log;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
+
+import java.io.IOException;
+
+public class MeetingBooker {
+
+
+    private Calendar calendarService;
+
+    public MeetingBooker(Calendar calendarService) {
+
+        this.calendarService = calendarService;
+    }
+
+    public boolean bookNow() {
+        boolean wasSuccess = true;
+
+        org.joda.time.DateTime roundedStartTime = getRoundedStartTime();
+
+        EventDateTime startTime = getEventDateTime(roundedStartTime);
+        EventDateTime endTime = getEventDateTime(roundedStartTime.plusMinutes(30));
+
+        Event event = new Event()
+                .setSummary("Booking")
+                .setStart(startTime)
+                .setEnd(endTime);
+
+        try {
+            calendarService.events().insert("nexweb.com_tkselniqr1e6sgn207optnhil0@group.calendar.google.com", event).execute();
+            Log.d("com.augmate.booking", "Meeting booked for " + event.getStart());
+        } catch (IOException e) {
+            e.printStackTrace();
+            wasSuccess = false;
+        }
+
+        return wasSuccess;
+    }
+
+    private EventDateTime getEventDateTime(org.joda.time.DateTime roundedStartTime) {
+        return new EventDateTime().setDateTime(new DateTime(roundedStartTime.toDate()));
+    }
+
+    private org.joda.time.DateTime getRoundedStartTime() {
+        org.joda.time.DateTime now = new org.joda.time.DateTime().now();
+        return now.minusMinutes(now.getMinuteOfHour() % 30);
+    }
+}
