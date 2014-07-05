@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
-import com.augmate.gct_mtg_client.app.services.BookActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.segment.android.Analytics;
@@ -21,10 +20,9 @@ public class MainActivity extends TrackedActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new CredentialGen(this).getAuthorization();
-
         mScanStart = SystemClock.uptimeMillis();
-        //new IntentIntegrator(this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
+
+        new IntentIntegrator(this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
     }
 
     @Override

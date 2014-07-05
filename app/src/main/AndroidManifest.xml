@@ -33,9 +33,10 @@
             <meta-data android:name="com.google.android.glass.VoiceTrigger"
                        android:resource="@xml/voice_triggers" />
         </activity>
+        <activity android:name="com.augmate.gct_mtg_client.app.BookActivity"/>
 
         <!--<activity-->
-                <!--android:name="com.augmate.gct_mtg_client.app.BeaconActivity">-->
+        <!--android:name="com.augmate.gct_mtg_client.app.BeaconActivity">-->
         <!--</activity>-->
 
         <service android:name="com.estimote.sdk.service.BeaconService"
