@@ -8,7 +8,7 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.auth.oauth2.*;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Userinfoplus;
 
@@ -21,7 +21,7 @@ import java.util.List;
 
 class OAuth {
     private static final String REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
-    private static final List<String> SCOPES = Arrays.asList(
+    public static final List<String> SCOPES = Arrays.asList(
             "https://www.googleapis.com/auth/calendar",
             "https://www.googleapis.com/auth/userinfo.email",
             "https://www.googleapis.com/auth/userinfo.profile");
@@ -109,7 +109,7 @@ class OAuth {
 
         return new GoogleCredential.Builder()
                 .setClientSecrets("314589339408-7d7dur5527ba6rikc7al54r3aa67p9ud.apps.googleusercontent.com", "")
-                .setJsonFactory(new JacksonFactory()).setTransport(AndroidHttp.newCompatibleTransport()).build()
+                .setJsonFactory(new GsonFactory()).setTransport(AndroidHttp.newCompatibleTransport()).build()
                 .setRefreshToken(refresh_token).setAccessToken(access_token);
     }
 
@@ -134,12 +134,14 @@ class OAuth {
     static GoogleAuthorizationCodeFlow getFlow() throws IOException {
         if (flow == null) {
             HttpTransport httpTransport = new NetHttpTransport();
-            JacksonFactory jsonFactory = new JacksonFactory();
+            GsonFactory jsonFactory = new GsonFactory();
             GoogleClientSecrets clientSecrets =
                     GoogleClientSecrets.load(jsonFactory, reader);
-            flow =
-                    new GoogleAuthorizationCodeFlow.Builder(httpTransport, jsonFactory, clientSecrets, SCOPES)
-                            .setAccessType("offline").setApprovalPrompt("force").build();
+
+            flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, jsonFactory, clientSecrets, SCOPES)
+                    .setAccessType("offline")
+                    .setApprovalPrompt("force")
+                    .build();
         }
         return flow;
     }
@@ -157,7 +159,10 @@ class OAuth {
         try {
             GoogleAuthorizationCodeFlow flow = getFlow();
             GoogleTokenResponse response =
-                    flow.newTokenRequest(authorizationCode).setRedirectUri(REDIRECT_URI).execute();
+                    flow.newTokenRequest(authorizationCode)
+                            .setRedirectUri(REDIRECT_URI)
+                            .execute();
+
             return flow.createAndStoreCredential(response, null);
         } catch (IOException e) {
             System.err.println("An error occurred: " + e);
@@ -175,7 +180,7 @@ class OAuth {
     static Userinfoplus getUserInfo(Credential credentials)
             throws NoUserIdException {
         Oauth2 userInfoService =
-                new Oauth2.Builder(new NetHttpTransport(), new JacksonFactory(), credentials).build();
+                new Oauth2.Builder(new NetHttpTransport(), new GsonFactory(), credentials).build();
         Userinfoplus userInfo = null;
         try {
             userInfo = userInfoService.userinfo().get().execute();
@@ -193,7 +198,7 @@ class OAuth {
      * Retrieve the authorization URL.
      *
      * @param userId User's Google ID.
-     * @param state State for the authorization URL.
+     * @param state  State for the authorization URL.
      * @return Authorization URL to redirect the user to.
      * @throws IOException Unable to load client_secrets.json.
      */

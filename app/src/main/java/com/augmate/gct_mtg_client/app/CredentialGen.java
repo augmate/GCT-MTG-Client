@@ -1,8 +1,16 @@
 package com.augmate.gct_mtg_client.app;
 
 import android.content.Context;
+import android.util.Log;
 import com.augmate.gct_mtg_client.R;
+import com.augmate.gct_mtg_client.app.services.GoogleOAuth2Service;
+import com.augmate.gct_mtg_client.app.services.models.DeviceAuthInfo;
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.repackaged.com.google.common.base.Joiner;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,7 +27,34 @@ public class CredentialGen {
         this.secretReader = new InputStreamReader(context.getResources().openRawResource(R.raw.secret));
     }
 
-    public Credential getCreditials(){
+    public void getAuthorization() {
+
+        RestAdapter adapter = new RestAdapter.Builder()
+                .setEndpoint("https://accounts.google.com")
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .build();
+
+        GoogleOAuth2Service service = adapter.create(GoogleOAuth2Service.class);
+
+        service.getDeviceCode("314589339408-7d7dur5527ba6rikc7al54r3aa67p9ud.apps.googleusercontent.com",
+                Joiner.on(' ').join(OAuth.SCOPES),
+                new Callback<DeviceAuthInfo>() {
+                    @Override
+                    public void success(DeviceAuthInfo deviceAuthInfo, Response response) {
+                        Log.d("com.augmate.auth", "device code :" + deviceAuthInfo.device_code);
+                        Log.d("com.augmate.auth", "verify url  :" + deviceAuthInfo.verification_url);
+                        Log.d("com.augmate.auth", "user code   :" + deviceAuthInfo.user_code);
+                    }
+
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                        Log.e("com.augmate.auth", "device auth failed");
+                    }
+                });
+
+    }
+
+    public Credential getCreditials() {
         OAuth.setReader(secretReader);
         OAuth.setContext(context);
 
