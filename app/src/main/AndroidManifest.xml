@@ -26,20 +26,17 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
         <activity
-            android:name="com.augmate.gct_mtg_client.app.MainActivity">
+            android:name=".app.MainActivity">
             <intent-filter>
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
             </intent-filter>
             <meta-data android:name="com.google.android.glass.VoiceTrigger"
                        android:resource="@xml/voice_triggers" />
         </activity>
-        <activity android:name="com.augmate.gct_mtg_client.app.BookActivity"/>
+        <activity android:name=".app.BookActivity"/>
         <activity android:name=".app.DeviceAuthInfoActivity"/>
-
-        <!--<activity-->
-        <!--android:name="com.augmate.gct_mtg_client.app.BeaconActivity">-->
-        <!--</activity>-->
-
+        <activity android:name=".app.BeaconActivity"/>
+        
         <service android:name="com.estimote.sdk.service.BeaconService"
                  android:exported="false"/>
     </application>

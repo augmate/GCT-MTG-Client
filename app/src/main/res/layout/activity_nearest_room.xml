@@ -9,7 +9,7 @@
         android:id="@+id/room_number"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Room 5"
+        android:text="Scanning.."
         android:gravity="center_horizontal|bottom" android:layout_weight="1" android:textSize="45dp"
             />
     
@@ -17,7 +17,7 @@
         android:id="@+id/distance"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="1.42"
+        android:text="(Using BLE Beacons)"
         android:layout_weight="1" android:textSize="20dp" android:gravity="center_horizontal|top"
         android:layout_marginTop="10dp"/>
 </LinearLayout>

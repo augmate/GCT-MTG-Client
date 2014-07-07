@@ -1,5 +1,7 @@
 package com.augmate.gct_mtg_client.app;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -111,8 +113,21 @@ public class BeaconActivity extends TrackedActivity
 
             ((TextView) findViewById(R.id.room_number)).setText("Room " + roomNumber);
             ((TextView) findViewById(R.id.distance)).setText(beaconId + " beacon is " + String.format("%.2f", distance) + " units away");
+
+            try {
+                beaconManager.stopRanging(BEACON_SEARCH_MASK);
+            } catch (RemoteException e) {
+                Log.e(TAG, "Can't stop Beacon Manager", e);
+            }
+
+            afterBeaconResult(msg);
         }
     };
+
+    private void afterBeaconResult(Message msg) {
+        setResult(Activity.RESULT_OK, new Intent().putExtras(msg.getData()));
+        finish();
+    }
 
     @Override
     protected void onDestroy() {
@@ -125,6 +140,28 @@ public class BeaconActivity extends TrackedActivity
     protected void onStart() {
         super.onStart();
 
+//        Credential credential = new CredentialGen(BeaconActivity.this).getCreditials() ;
+//
+//        Calendar calendarService = new Calendar.Builder(
+//                AndroidHttp.newCompatibleTransport(), new JacksonFactory(), credential)
+//                .setApplicationName("Google-CalendarAndroidSample/1.0")
+//                .build();
+
+//        org.joda.time.DateTime start = new org.joda.time.DateTime().now();
+//        start.minusMinutes(start.getMinuteOfHour() % 30);
+//        org.joda.time.DateTime end = new org.joda.time.DateTime().now();
+//        end.plusHours(8);
+//
+//        try {
+//            calendarService.events().list("nexweb.com_tkselniqr1e6sgn207optnhil0@group.calendar.google.com")
+//                    .setTimeMin(new DateTime(start.toDate()))
+//                    .setTimeMax(new DateTime(end.toDate()))
+//                    .execute();
+//        } catch (IOException e) {
+//            Log.e(TAG, "Error requesting google-calendar event list");
+//            e.printStackTrace();
+//        }
+
         Log.d(TAG, "Started!");
 
         if (!beaconManager.hasBluetooth()) {
@@ -134,7 +171,6 @@ public class BeaconActivity extends TrackedActivity
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override public void onServiceReady() {
-                
                 Log.d(TAG, "Beacon Service is ready.");
                 
                 try {
@@ -155,13 +191,5 @@ public class BeaconActivity extends TrackedActivity
         } catch (RemoteException e) {
             Log.e(TAG, "Cannot stop but it does not matter now", e);
         }
-    }
-
-    
-    public void getNearestBeacon()
-    {
-        Log.d(TAG, "Getting nearest beacon");
-
-        //com.estimote.sdk.utils.L.enableDebugLogging(true);
     }
 }
