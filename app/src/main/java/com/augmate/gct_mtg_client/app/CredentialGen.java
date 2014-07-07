@@ -75,8 +75,10 @@ public class CredentialGen {
                                 .edit()
                                 .putString("device_code", deviceAuthInfo.device_code)
                                 .apply();
-
-                        context.startActivity(new Intent(context, DeviceAuthActivity.class));
+                        Intent i = new Intent(context, DeviceAuthInfoActivity.class);
+                        i.putExtra("verification_url", deviceAuthInfo.verification_url);
+                        i.putExtra("user_code", deviceAuthInfo.user_code);
+                        context.startActivity(i);
                     }
 
                     @Override
