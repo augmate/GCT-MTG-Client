@@ -12,10 +12,24 @@ import com.google.api.services.calendar.Calendar;
 public class BookAsyncTask extends AsyncTask<Void, Void, Boolean>{
 
     private Context context;
+    private ActivityCallbacks activityCallbacks;
 
-    public BookAsyncTask(Context context) {
+    public BookAsyncTask(Context context, ActivityCallbacks activityCallbacks) {
         this.context = context;
+        this.activityCallbacks = activityCallbacks;
     }
+
+    @Override
+    protected void onPostExecute(Boolean success) {
+        super.onPostExecute(success);
+
+        if(success){
+            activityCallbacks.onTaskSuccess();
+        }else{
+            activityCallbacks.onTaskFailed();
+        }
+    }
+
 
     @Override
     protected Boolean doInBackground(Void... params) {
