@@ -2,6 +2,7 @@ package com.augmate.gct_mtg_client.app;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
@@ -16,6 +17,7 @@ public class BookActivity extends Activity implements ActivityCallbacks {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.booking);
 
         roomNumber = getIntent().getIntExtra(ROOM_NUMBER_EXTRA,-1);
