@@ -12,6 +12,10 @@ import com.segment.android.Analytics;
 import com.segment.android.TrackedActivity;
 import com.segment.android.models.Props;
 
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+
 public class MainActivity extends TrackedActivity {
     final static int BeaconActivityRequest = 2;
     private static final String TAG = "MainActivity";
@@ -52,7 +56,7 @@ public class MainActivity extends TrackedActivity {
 
                 Log.d(TAG, "onActivityResult(); Beacon Scan returned room " + roomNumber + " at distance " + String.format("%.2f", distance));
 
-                startBooking(roomNumber);
+                startBooking(newArrayList(new RoomOption(roomNumber, 1.0f)));
 
             } else {
                 // no beacon located, launch qr-code scanner
@@ -72,22 +76,23 @@ public class MainActivity extends TrackedActivity {
             Log.d(TAG, "onActivityResult(); QR Code Scan returned: " + intentResult.getContents());
 
             Integer roomNumber = Integer.valueOf(intentResult.getContents());
-            startBooking(roomNumber);
+            startBooking(newArrayList(new RoomOption(roomNumber, 1.0f)));
             finish();
         }
     }
 
-    private void startBooking(int roomNumber) {
+    private void startBooking(List<RoomOption> roomOptions) {
         try {
+            RoomOption roomOption = roomOptions.get(0);
 
-            if (roomNumber < 1 || roomNumber > 10) {
+            if (roomOption.number < 1 || roomOption.number > 10) {
                 throw new IndexOutOfBoundsException();
             }
 
-            startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA,roomNumber));
+            startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, roomOption.number));
 
         } catch (Exception e) {
-            Toast.makeText(this, getString(R.string.invalid_room_error, roomNumber), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.invalid_room_error, roomOptions), Toast.LENGTH_LONG).show();
         }
 
         Analytics.track("QR Code Scan", new Props(

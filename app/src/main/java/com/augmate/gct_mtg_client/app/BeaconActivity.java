@@ -142,28 +142,6 @@ public class BeaconActivity extends TrackedActivity
     protected void onStart() {
         super.onStart();
 
-//        Credential credential = new CredentialGen(BeaconActivity.this).getCreditials() ;
-//
-//        Calendar calendarService = new Calendar.Builder(
-//                AndroidHttp.newCompatibleTransport(), new JacksonFactory(), credential)
-//                .setApplicationName("Google-CalendarAndroidSample/1.0")
-//                .build();
-
-//        org.joda.time.DateTime start = new org.joda.time.DateTime().now();
-//        start.minusMinutes(start.getMinuteOfHour() % 30);
-//        org.joda.time.DateTime end = new org.joda.time.DateTime().now();
-//        end.plusHours(8);
-//
-//        try {
-//            calendarService.events().list("nexweb.com_tkselniqr1e6sgn207optnhil0@group.calendar.google.com")
-//                    .setTimeMin(new DateTime(start.toDate()))
-//                    .setTimeMax(new DateTime(end.toDate()))
-//                    .execute();
-//        } catch (IOException e) {
-//            Log.e(TAG, "Error requesting google-calendar event list");
-//            e.printStackTrace();
-//        }
-
         Log.d(TAG, "Started!");
 
         if (!beaconManager.hasBluetooth()) {
