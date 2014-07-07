@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.augmate.gct_mtg_client">
 
-    <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="19" />
-
     <uses-permission android:name="com.google.android.glass.permission.DEVELOPMENT" />
 
     <!-- Required for internet. -->
