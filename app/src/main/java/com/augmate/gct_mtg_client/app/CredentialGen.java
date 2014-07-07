@@ -18,10 +18,12 @@ import retrofit.client.Response;
 
 import java.io.IOException;
 
+// Not thread safe by any stretch of the imagination
 public class CredentialGen {
     private static final String CLIENT_ID = "314589339408-q9e0q18opa260t2ru18t6kklrsu1hn0p.apps.googleusercontent.com";
     private static final String CLIENT_SECRET = "u7yOA3IGmOfioJL8ENjQsNFh";
     private static final String GRANT_TYPE = "http://oauth.net/grant_type/device/1.0";
+    private static final String GOOGLE_ACCOUNTS_HOSTNAME = "https://accounts.google.com";
 
     private final GoogleOAuth2Service service;
     private Context context;
@@ -30,7 +32,7 @@ public class CredentialGen {
         this.context = context;
 
         RestAdapter adapter = new RestAdapter.Builder()
-                .setEndpoint("https://accounts.google.com")
+                .setEndpoint(GOOGLE_ACCOUNTS_HOSTNAME)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build();
 
@@ -93,7 +95,7 @@ public class CredentialGen {
                 googleCredential = getStoredCredentials();
 
                 if (googleCredential.getRefreshToken() == null) {
-                    Log.i("com.augmate.auth", "Getting new tokens, none stored");
+                    Log.i("com.augmate.auth", "Getting new tokens, refresh token not stored");
                     googleCredential = getToken(device_code);
                 } else {
                     Log.i("com.augmate.auth", "Found tokens, refreshing them");

@@ -10,6 +10,6 @@
         android:id="@+id/booking_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:text="Booking..."/>
+        android:text="@string/booking_in_progress"/>
 
 </LinearLayout>
