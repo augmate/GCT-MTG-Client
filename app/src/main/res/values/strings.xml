@@ -3,7 +3,7 @@
 
     <string name="app_name">gct_mtg_client</string>
     <string name="voice_trigger">book room now</string>
-    <string name="invalid_room_error">%1$s is not a room</string>
+    <string name="invalid_room_error">%1$d is not a room</string>
     <string name="booking_in_progress">Booking...</string>
 
 </resources>
