@@ -19,13 +19,19 @@ public class BookAsyncTask extends AsyncTask<Void, Void, Boolean>{
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        Credential credential = new CredentialGen(context).getCreditials() ;
+        Boolean success = false;
 
-        Calendar calendarService = new Calendar.Builder(
-                AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
-                .setApplicationName("Google-CalendarAndroidSample/1.0")
-                .build();
+        Credential credential = new CredentialGen(context).getCreditials();
 
-        return new MeetingBooker(calendarService).bookNow();
+        if(credential != null) {
+            Calendar calendarService = new Calendar.Builder(
+                    AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
+                    .setApplicationName("GCTMeetingClient/1.0")
+                    .build();
+
+            success = new MeetingBooker(calendarService).bookNow();
+        }
+
+        return success;
     }
 }

@@ -10,6 +10,7 @@ import java.io.IOException;
 
 public class MeetingBooker {
 
+    public static final String CALENDAR_ID = "nexweb.com_tkselniqr1e6sgn207optnhil0@group.calendar.google.com";
     private Calendar calendarService;
 
     public MeetingBooker(Calendar calendarService) {
@@ -30,7 +31,7 @@ public class MeetingBooker {
                 .setEnd(endTime);
 
         try {
-            calendarService.events().insert("nexweb.com_tkselniqr1e6sgn207optnhil0@group.calendar.google.com", event).execute();
+            calendarService.events().insert(CALENDAR_ID, event).execute();
             Log.d("com.augmate.booking", "Meeting booked for " + event.getStart());
         } catch (IOException e) {
             e.printStackTrace();
