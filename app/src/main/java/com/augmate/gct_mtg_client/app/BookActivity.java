@@ -10,21 +10,22 @@ import com.augmate.gct_mtg_client.app.tasks.BookAsyncTask;
 
 public class BookActivity extends Activity implements ActivityCallbacks {
 
-    public static final String ROOM_NUMBER = "room_number";
+    public static final String ROOM_NUMBER_EXTRA = "room_number";
+    private int roomNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.booking);
 
-        int roomNumber = getIntent().getIntExtra(ROOM_NUMBER,-1);
+        roomNumber = getIntent().getIntExtra(ROOM_NUMBER_EXTRA,-1);
 
         new BookAsyncTask(this, this, roomNumber).execute();
     }
 
     @Override
     public void onTaskSuccess() {
-        ((TextView) findViewById(R.id.booking_view)).setText("Booked!");
+        ((TextView) findViewById(R.id.booking_view)).setText("Booked room " + roomNumber+ "!");
     }
 
     @Override
