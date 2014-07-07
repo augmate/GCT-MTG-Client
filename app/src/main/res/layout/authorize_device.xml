@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="@dimen/glass_card_body_height"
+              android:layout_marginLeft="@dimen/glass_card_margin"
+              android:layout_marginTop="@dimen/glass_card_margin"
+              android:layout_marginRight="@dimen/glass_card_margin">
+
+    <TextView
+        android:id="@+id/intro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="On your web browser, go to" />
+
     <TextView
         android:id="@+id/device_auth_url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="36sp"/>
+        android:layout_below="@+id/intro"        />
 
     <TextView
         android:id="@+id/user_code"
-        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="36sp"/>
-</LinearLayout>
+        android:layout_below="@+id/device_auth_url"
+        android:background="#ff1135ff"/>
+
+</RelativeLayout>
