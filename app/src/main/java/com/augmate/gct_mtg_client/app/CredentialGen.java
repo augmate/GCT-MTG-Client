@@ -1,12 +1,12 @@
 package com.augmate.gct_mtg_client.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import com.augmate.gct_mtg_client.app.services.GoogleOAuth2Service;
 import com.augmate.gct_mtg_client.app.services.models.DeviceAuthInfo;
 import com.augmate.gct_mtg_client.app.services.models.GoogleTokenCredential;
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.json.gson.GsonFactory;
@@ -17,6 +17,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 import java.io.IOException;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 // Not thread safe by any stretch of the imagination
 public class CredentialGen {
@@ -47,14 +49,18 @@ public class CredentialGen {
                 deviceCode,
                 GRANT_TYPE);
 
-        GoogleCredential googleCredential = buildGoogleCredentials(token.access_token, token.refresh_token);
+        GoogleCredential googleCredential = null;
 
-        storeCredentials(googleCredential);
+        if(isNullOrEmpty(token.error)){
+            googleCredential = buildGoogleCredentials(token.access_token, token.refresh_token);
+            storeCredentials(googleCredential);
+        }
 
         return googleCredential;
     }
 
     public void getAuthorization() {
+        Log.i("com.augmate.auth", "authorizing device");
 
         service.getDeviceCode(CLIENT_ID,
                 Joiner.on(' ').join(OAuth.SCOPES),
@@ -69,6 +75,8 @@ public class CredentialGen {
                                 .edit()
                                 .putString("device_code", deviceAuthInfo.device_code)
                                 .apply();
+
+                        context.startActivity(new Intent(context, DeviceAuthActivity.class));
                     }
 
                     @Override
@@ -79,7 +87,7 @@ public class CredentialGen {
 
     }
 
-    public Credential getCreditials() {
+    public GoogleCredential getCreditials() {
         GoogleCredential googleCredential = null;
 
         String device_code = context
@@ -89,26 +97,25 @@ public class CredentialGen {
         Log.d("com.augmate.auth", "device_code from storage: " + device_code);
 
         try {
+            googleCredential = getStoredCredentials();
 
-            if (device_code != "") {
-
-                googleCredential = getStoredCredentials();
-
-                if (googleCredential.getRefreshToken() == null) {
-                    Log.i("com.augmate.auth", "Getting new tokens, refresh token not stored");
-                    googleCredential = getToken(device_code);
-                } else {
-                    Log.i("com.augmate.auth", "Found tokens, refreshing them");
-                    googleCredential.refreshToken();
-                }
-
+            if (googleCredential.getRefreshToken() == null) {
+                Log.i("com.augmate.auth", "Getting new tokens, refresh token not stored");
+                googleCredential = getToken(device_code);
             } else {
+                Log.i("com.augmate.auth", "Found tokens, refreshing them");
+                googleCredential.refreshToken();
+            }
+        } catch (IOException e) {
+            // empty
+        } catch (RetrofitError e) {
+            // empty
+        } finally {
+            if(googleCredential == null || isNullOrEmpty(googleCredential.getRefreshToken())){
                 getAuthorization();
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
 
         return googleCredential;
     }

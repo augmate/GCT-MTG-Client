@@ -38,7 +38,6 @@ public class MainActivity extends TrackedActivity {
                 }
 
                 startActivity(new Intent(this, BookActivity.class));
-                finish();
 
             } catch (Exception e) {
                 Toast.makeText(this, getString(R.string.invalid_room_error, intentResult.getContents()), Toast.LENGTH_LONG).show();
@@ -47,6 +46,8 @@ public class MainActivity extends TrackedActivity {
             Analytics.track("QR Code Scan", new Props(
                     "value", SystemClock.uptimeMillis() - mScanStart
             ));
+
+            finish();
         }
     }
 }

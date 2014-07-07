@@ -6,10 +6,11 @@ import com.augmate.gct_mtg_client.app.CredentialGen;
 import com.augmate.gct_mtg_client.app.MeetingBooker;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.calendar.Calendar;
 
-public class BookAsyncTask extends AsyncTask<Void, Void, Boolean>{
+public class BookAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     private Context context;
     private ActivityCallbacks activityCallbacks;
@@ -23,9 +24,9 @@ public class BookAsyncTask extends AsyncTask<Void, Void, Boolean>{
     protected void onPostExecute(Boolean success) {
         super.onPostExecute(success);
 
-        if(success){
+        if (success) {
             activityCallbacks.onTaskSuccess();
-        }else{
+        } else {
             activityCallbacks.onTaskFailed();
         }
     }
@@ -33,19 +34,17 @@ public class BookAsyncTask extends AsyncTask<Void, Void, Boolean>{
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        Boolean success = false;
+        GoogleCredential credentials = new CredentialGen(context).getCreditials();
 
-        Credential credential = new CredentialGen(context).getCreditials();
+        Calendar calendarService = buildCalendarService(credentials);
 
-        if(credential != null) {
-            Calendar calendarService = new Calendar.Builder(
-                    AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
-                    .setApplicationName("GCTMeetingClient/1.0")
-                    .build();
+        return new MeetingBooker(calendarService).bookNow();
+    }
 
-            success = new MeetingBooker(calendarService).bookNow();
-        }
-
-        return success;
+    private Calendar buildCalendarService(Credential credential) {
+        return new Calendar.Builder(
+                AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
+                .setApplicationName("GCTMeetingClient/1.0")
+                .build();
     }
 }
