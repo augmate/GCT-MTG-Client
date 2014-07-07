@@ -28,13 +28,6 @@ public class MainActivity extends TrackedActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        
-        Log.d(TAG, "Committing seppuko");
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         
         Log.d(TAG, "request code: " + requestCode + " resultCode: " + resultCode);

@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="@dimen/glass_card_body_height"
-              android:layout_marginLeft="@dimen/glass_card_margin"
-              android:layout_marginTop="@dimen/glass_card_margin"
-              android:layout_marginRight="@dimen/glass_card_margin">
+              android:layout_height="match_parent"
+              android:layout_margin="@dimen/glass_card_margin"
+              android:gravity="center_vertical|top"
+              android:orientation="vertical">
 
     <TextView
         android:id="@+id/intro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="On your web browser, go to" />
+        android:text="@string/auth_instr_browser"/>
 
     <TextView
         android:id="@+id/device_auth_url"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/mid"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/intro"        />
+        android:text="@string/auth_inst_enter_code"/>
 
     <TextView
         android:id="@+id/user_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/device_auth_url"
-        android:background="#ff1135ff"/>
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:textSize="55sp"
+        />
 
-</RelativeLayout>
+</LinearLayout>
