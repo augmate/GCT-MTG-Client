@@ -37,7 +37,7 @@ public class MainActivity extends TrackedActivity {
                     throw new IndexOutOfBoundsException();
                 }
 
-                startActivity(new Intent(this, BookActivity.class));
+                startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER,roomNumber));
 
             } catch (Exception e) {
                 Toast.makeText(this, getString(R.string.invalid_room_error, intentResult.getContents()), Toast.LENGTH_LONG).show();

@@ -10,12 +10,16 @@ import com.augmate.gct_mtg_client.app.tasks.BookAsyncTask;
 
 public class BookActivity extends Activity implements ActivityCallbacks {
 
+    public static final String ROOM_NUMBER = "room_number";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.booking);
 
-        new BookAsyncTask(this, this).execute();
+        int roomNumber = getIntent().getIntExtra(ROOM_NUMBER,-1);
+
+        new BookAsyncTask(this, this, roomNumber).execute();
     }
 
     @Override

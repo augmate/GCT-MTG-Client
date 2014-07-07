@@ -14,10 +14,12 @@ public class BookAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     private Context context;
     private ActivityCallbacks activityCallbacks;
+    private int roomNumber;
 
-    public BookAsyncTask(Context context, ActivityCallbacks activityCallbacks) {
+    public BookAsyncTask(Context context, ActivityCallbacks activityCallbacks, int roomNumber) {
         this.context = context;
         this.activityCallbacks = activityCallbacks;
+        this.roomNumber = roomNumber;
     }
 
     @Override
@@ -38,7 +40,7 @@ public class BookAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
         Calendar calendarService = buildCalendarService(credentials);
 
-        return new MeetingBooker(calendarService).bookNow();
+        return new MeetingBooker(calendarService).bookNow(roomNumber);
     }
 
     private Calendar buildCalendarService(Credential credential) {
