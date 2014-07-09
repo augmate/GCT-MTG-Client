@@ -37,6 +37,7 @@ public class WelcomeActivity extends RoboActivity{
             i.putExtra(WalkInstructionActivity.COMPANY_NAME_EXTRA, companyName);
 
             startActivity(i);
+            finish();
         }
     }
 }
