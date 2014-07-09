@@ -12,7 +12,7 @@ import com.augmate.gct_mtg_client.app.tasks.BookAsyncTask;
 public class BookActivity extends Activity implements ActivityCallbacks {
 
     public static final String ROOM_NUMBER_EXTRA = "room_number";
-    private int roomNumber;
+    private String roomNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +20,7 @@ public class BookActivity extends Activity implements ActivityCallbacks {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.booking);
 
-        roomNumber = getIntent().getIntExtra(ROOM_NUMBER_EXTRA,-1);
+        roomNumber = getIntent().getStringExtra(ROOM_NUMBER_EXTRA);
 
         new BookAsyncTask(this, this, roomNumber).execute();
     }

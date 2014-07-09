@@ -18,14 +18,22 @@ import com.estimote.sdk.Utils;
 import com.estimote.sdk.utils.L;
 import com.segment.android.TrackedActivity;
 
-import java.util.List;
+import java.util.*;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 public class BeaconActivity extends TrackedActivity
 {
-    private static final String TAG = "Beaconizer";
+    //private static final String TAG = "Beaconizer";
     private static final Region BEACON_SEARCH_MASK = new Region("rid", null, null, null);
             
     private BeaconManager beaconManager;
+    
+    private class BeaconData {
+        public List<String> rooms = new ArrayList<String>(); // rooms/resources this beacon represents
+        public float confidence; // confidence of distance
+        public float distance; // distance to user
+    }
     
     
     /*
@@ -35,6 +43,8 @@ public class BeaconActivity extends TrackedActivity
         purple          40125:2233
         light-blue      1:9
         light-green     1:7                  
+        
+        once we can modify beacon data, this won't be necessary
      */
     protected String getBeaconName(Beacon beacon) {
         String name = beacon.getMajor() + ":" + beacon.getMinor();
@@ -49,6 +59,29 @@ public class BeaconActivity extends TrackedActivity
         return "(unknown beacon)";
     }
     
+    protected BeaconData getBeaconData(Beacon beacon) {
+        String beaconName = getBeaconName(beacon);
+        float distance = (float)Utils.computeAccuracy(beacon);
+
+        Log.d("BeaconActivity::getBeaconData()", "  Beacon " + beaconName + " accuracy=" + String.format("%.2f", distance) + " power=" + beacon.getMeasuredPower() + " rssi=" + beacon.getRssi());
+
+        // beacon data could be stored in the beacon, or pulled from a web-service
+        BeaconData data = new BeaconData();
+        data.distance = distance;
+        data.confidence = 1;
+        
+        if (beaconName.equals("purple")) {
+            data.rooms.add("Room 1");
+            data.rooms.add("Room 2");
+        } else if (beaconName.equals("light-blue")) {
+            data.rooms.add("Garage");
+        } else if (beaconName.equals("light-green")) {
+            data.rooms.add("Room 4");
+        }
+        
+        return data;
+    }
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,78 +91,108 @@ public class BeaconActivity extends TrackedActivity
         L.enableDebugLogging(true);
 
         beaconManager = new BeaconManager(this);
+        //beaconManager.setForegroundScanPeriod(1000, 5000);
+        //beaconManager.setBackgroundScanPeriod(1000, 5000);
         
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
-            @Override public void onBeaconsDiscovered(Region region, List<Beacon> beacons) {
-                Log.d(TAG, "Ranged beacons: " + beacons);
+            @Override public void onBeaconsDiscovered(Region region, List<Beacon> rawBeacons) {
+                Log.d("BeaconActivity::onCreate()::onBeaconsDiscovered()", "BLE-scan found ranged beacons: " + rawBeacons);
                 
                 // cut-off point for beacons
                 // when at 15% broadcast power, 4 seems to be far enough to ignore
                 // TODO: does the reported beacon distance change with power?
-                double nearestBeaconDist = 4;
-                Beacon nearestBeacon = null;
+                double beaconCutoffDist = 3;
+                BeaconData nearestBeaconData = null;
                 
-                for(Beacon beacon : beacons) {
-                    Utils.Proximity proximity = Utils.computeProximity(beacon);
-                    double distance = Utils.computeAccuracy(beacon);
-                    String color = getBeaconName(beacon);
+                List<BeaconData> processedBeacons = new ArrayList<BeaconData>();
+                
+                for(Beacon beacon : rawBeacons) {
                     
-                    Log.d(TAG, "  Beacon " + color + " accuracy=" + String.format("%.2f", distance) + " proximity=" + proximity);
+                    BeaconData processedBeacon = getBeaconData(beacon);
                     
-                    if(distance < nearestBeaconDist) {
-                        nearestBeaconDist = distance;
-                        nearestBeacon = beacon;
+                    if(processedBeacon.distance < beaconCutoffDist) {
+                        beaconCutoffDist = processedBeacon.distance;
+                        nearestBeaconData = processedBeacon;
                     }
+
+                    processedBeacons.add(processedBeacon);
                 }
                 
-                // if we have a near-by beacon, send its id to a handler that will update UI
-                if(nearestBeacon != null) {
-                    Bundle data = new Bundle();
-                    data.putString("beaconId", getBeaconName(nearestBeacon));
-                    data.putDouble("distance", nearestBeaconDist);
-                    Message msg = onBeaconFoundHandler.obtainMessage();
-                    msg.setData(data);
-                    onBeaconFoundHandler.sendMessage(msg);
+                Collections.sort(processedBeacons, new Comparator<BeaconData>() {
+                    @Override
+                    public int compare(BeaconData lhs, BeaconData rhs) {
+                        // assuming precision down to 0.01 units ("meters")
+                        return (int) (100 * (lhs.distance - rhs.distance));
+                    }
+                });
+                
+                
+                List<RoomOption> rooms = new ArrayList<RoomOption>();
+                for (BeaconData processedBeacon : processedBeacons) {
+                    for(String roomName : processedBeacon.rooms)
+                        rooms.add(new RoomOption(roomName, processedBeacon.confidence, processedBeacon.distance));
                 }
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("rooms", rooms.toArray());
+                
+                Message msg = onBeaconFoundHandler.obtainMessage();
+                msg.setData(bundle);
+                onBeaconFoundHandler.sendMessage(msg);
             }
         });
         
-        Log.d(TAG, "Started Beacon Manager");
+        Log.d("BeaconActivity::onCreate()", "BeaconManager configured.");
     }
     
     Handler onBeaconFoundHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            String beaconId = msg.getData().getString("beaconId");
-            Double distance = msg.getData().getDouble("distance");
-            
-            int roomNumber = 0;
-            
-            if(beaconId.equals("purple"))
-                roomNumber = 1;
-            else if(beaconId.equals("light-blue"))
-                roomNumber = 2;
-            else if(beaconId.equals("light-green"))
-                roomNumber = 3;
 
-            ((TextView) findViewById(R.id.room_number)).setText("Room " + roomNumber);
-            ((TextView) findViewById(R.id.distance)).setText(beaconId + " beacon is " + String.format("%.2f", distance) + " units away");
+            Object[] roomsArr = (Object[]) msg.getData().getSerializable("rooms");
+            RoomOption[] rooms = Arrays.copyOf(roomsArr, roomsArr.length, RoomOption[].class);
 
-            try {
-                beaconManager.stopRanging(BEACON_SEARCH_MASK);
-            } catch (RemoteException e) {
-                Log.e(TAG, "Can't stop Beacon Manager", e);
+            if (rooms.length < 1) {
+                ((TextView) findViewById(R.id.room_name)).setText("No rooms near by");
+                ((TextView) findViewById(R.id.distance)).setText("Go for a walk");
+                return;
             }
 
-            afterBeaconResult(msg);
+            ((TextView) findViewById(R.id.room_name)).setText("Near: " + rooms[0].name);
+            ((TextView) findViewById(R.id.distance)).setText("Distance = " + String.format("%.2f", rooms[0].distance) + "magical units");
+
+            // always take the first two rooms
+            ((TextView) findViewById(R.id.beacon1)).setText(
+                    String.format("room %s confidence = %.2f distance = %.2f",
+                            rooms[0].name, rooms[0].confidence, rooms[0].distance
+                    ));
+
+            if (rooms.length > 1)
+                ((TextView) findViewById(R.id.beacon2)).setText(
+                        String.format("room %s confidence = %.2f distance = %.2f",
+                                rooms[1].name, rooms[1].confidence, rooms[1].distance
+                        ));
+
+            onBeaconSuccess(msg);
         }
     };
 
-    private void afterBeaconResult(Message msg) {
+    /**
+     * Shutdown beacon scan, set beacon data as a result, pop activity
+     * @param msg RoomOption array serialized inside a bundle
+     */
+    private void onBeaconSuccess(Message msg) {
+        try {
+            beaconManager.stopRanging(BEACON_SEARCH_MASK);
+        } catch (RemoteException e) {
+            Log.e("BeaconActivity::onBeaconSuccess()", "Can't stop Beacon Manager", e);
+        }
         setResult(Activity.RESULT_OK, new Intent().putExtras(msg.getData()));
         finish();
     }
+    
+    
 
     @Override
     protected void onDestroy() {
@@ -142,8 +205,6 @@ public class BeaconActivity extends TrackedActivity
     protected void onStart() {
         super.onStart();
 
-        Log.d(TAG, "Started!");
-
         if (!beaconManager.hasBluetooth()) {
             Toast.makeText(this, "Device does not have Bluetooth Low Energy", Toast.LENGTH_LONG).show();
             return;
@@ -151,12 +212,12 @@ public class BeaconActivity extends TrackedActivity
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override public void onServiceReady() {
-                Log.d(TAG, "Beacon Service is ready.");
+                Log.d("BeaconActivity::onStart()", "Beacon Service is ready. Starting ranging scan.");
                 
                 try {
                     beaconManager.startRanging(BEACON_SEARCH_MASK);
                 } catch (RemoteException e) {
-                    Log.e(TAG, "Cannot start ranging", e);
+                    Log.e("BeaconActivity::onStart()", "BeaconManager couldn't start ranging.", e);
                 }
             }
         });
@@ -166,10 +227,12 @@ public class BeaconActivity extends TrackedActivity
     protected void onStop() {
         super.onStop();
 
+        Log.d("BeaconActivity::onStop()", "Starting ranging scan.");
+
         try {
             beaconManager.stopRanging(BEACON_SEARCH_MASK);
         } catch (RemoteException e) {
-            Log.e(TAG, "Cannot stop but it does not matter now", e);
+            Log.e("BeaconActivity::onStop()", "BeaconManager couldn't stop ranging.", e);
         }
     }
 }

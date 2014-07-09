@@ -7,14 +7,20 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MeetingBooker {
-    private static String[] CALENDAR_IDS =
-            {"nexweb.com_tkselniqr1e6sgn207optnhil0@group.calendar.google.com",
-            "nexweb.com_k3mj5av5j3mn2pcop96piklcbk@group.calendar.google.com",
-            "nexweb.com_t7rme89uccrnu2see0m6km8qk0@group.calendar.google.com",
-            "nexweb.com_a4jmm6foedk1r8rmjtf8v29e6k@group.calendar.google.com",
-            "nexweb.com_8ql9i1k0o7042omr7c2e3lpboo@group.calendar.google.com"};
+    
+    private static Map<String,String> CALENDAR_IDS = new HashMap<String,String>();
+
+    static {
+        CALENDAR_IDS.put("Room 1", "nexweb.com_tkselniqr1e6sgn207optnhil0@group.calendar.google.com");
+        CALENDAR_IDS.put("Room 2", "nexweb.com_k3mj5av5j3mn2pcop96piklcbk@group.calendar.google.com");
+        CALENDAR_IDS.put("Garage", "nexweb.com_t7rme89uccrnu2see0m6km8qk0@group.calendar.google.com");
+        CALENDAR_IDS.put("Room 4", "nexweb.com_a4jmm6foedk1r8rmjtf8v29e6k@group.calendar.google.com");
+        CALENDAR_IDS.put("Room 5", "nexweb.com_8ql9i1k0o7042omr7c2e3lpboo@group.calendar.google.com");
+    }
 
     private Calendar calendarService;
 
@@ -22,7 +28,7 @@ public class MeetingBooker {
         this.calendarService = calendarService;
     }
 
-    public boolean bookNow(int roomNumber) {
+    public boolean bookNow(String roomNumber) {
         boolean wasSuccess = true;
 
         org.joda.time.DateTime roundedStartTime = getRoundedStartTime();
@@ -36,8 +42,8 @@ public class MeetingBooker {
                 .setEnd(endTime);
 
         try {
-            calendarService.events().insert(CALENDAR_IDS[roomNumber-1], event).execute();
-            Log.d("com.augmate.booking", String.format("Meeting room %d booked for %s", roomNumber, event.getStart()));
+            calendarService.events().insert(CALENDAR_IDS.get(roomNumber), event).execute();
+            Log.d("com.augmate.booking", String.format("Meeting room %s booked for %s", roomNumber, event.getStart()));
         } catch (IOException e) {
             e.printStackTrace();
             wasSuccess = false;

@@ -14,9 +14,9 @@ public class BookAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     private Context context;
     private ActivityCallbacks activityCallbacks;
-    private int roomNumber;
+    private String roomNumber;
 
-    public BookAsyncTask(Context context, ActivityCallbacks activityCallbacks, int roomNumber) {
+    public BookAsyncTask(Context context, ActivityCallbacks activityCallbacks, String roomNumber) {
         this.context = context;
         this.activityCallbacks = activityCallbacks;
         this.roomNumber = roomNumber;
