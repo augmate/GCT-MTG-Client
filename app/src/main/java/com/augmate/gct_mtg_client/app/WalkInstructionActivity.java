@@ -4,21 +4,28 @@ import android.os.Bundle;
 import android.widget.TextView;
 import com.augmate.gct_mtg_client.R;
 import roboguice.activity.RoboActivity;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectResource;
 import roboguice.inject.InjectView;
 
+@ContentView(R.layout.walking_instructions)
 public class WalkInstructionActivity extends RoboActivity {
     public static final String COMPANY_NAME_EXTRA = "COMPANY_NAME_EXTRA";
 
-    @InjectView(R.id.company_name)
-    TextView companyNameView;
+    @InjectView(R.id.walking_instructions)
+    TextView walkingInstructionsView;
+    @InjectResource(R.string.walking_instructions)
+    String walkingInstructionsTemplate;
+    @InjectExtra(COMPANY_NAME_EXTRA)
+    String companyName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.walking_instructions);
 
-        String companyName = getIntent().getStringExtra(COMPANY_NAME_EXTRA);
+        String walkingInstructions = String.format(walkingInstructionsTemplate, companyName);
 
-        companyNameView.setText(companyName);
+        walkingInstructionsView.setText(walkingInstructions);
     }
 }

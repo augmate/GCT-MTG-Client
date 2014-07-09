@@ -8,6 +8,6 @@
     <string name="auth_inst_enter_code">and enter the following code:</string>
     <string name="auth_instr_browser">On your web browser, go to</string>
     <string name="scan_code_prompt">Scan the QR code for your company</string>
-    <string name="walking_instructions">walk to room you\'d like to check out</string>
+    <string name="walking_instructions">%s, walk to the room you\'d like to check out</string>
 
 </resources>
