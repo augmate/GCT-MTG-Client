@@ -17,11 +17,18 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 // Not thread safe by any stretch of the imagination
 public class CredentialGen {
+    public static final List<String> SCOPES = Arrays.asList(
+            "https://www.googleapis.com/auth/calendar",
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/userinfo.profile");
+
     private static final String CLIENT_ID = "314589339408-q9e0q18opa260t2ru18t6kklrsu1hn0p.apps.googleusercontent.com";
     private static final String CLIENT_SECRET = "u7yOA3IGmOfioJL8ENjQsNFh";
     private static final String GRANT_TYPE = "http://oauth.net/grant_type/device/1.0";
@@ -63,7 +70,7 @@ public class CredentialGen {
         Log.i("com.augmate.auth", "authorizing device");
 
         service.getDeviceCode(CLIENT_ID,
-                Joiner.on(' ').join(OAuth.SCOPES),
+                Joiner.on(' ').join(SCOPES),
                 new Callback<DeviceAuthInfo>() {
                     @Override
                     public void success(DeviceAuthInfo deviceAuthInfo, Response response) {
