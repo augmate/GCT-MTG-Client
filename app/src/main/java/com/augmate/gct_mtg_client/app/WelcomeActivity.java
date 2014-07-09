@@ -3,13 +3,17 @@ package com.augmate.gct_mtg_client.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.WindowManager;
 import com.augmate.gct_mtg_client.R;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import roboguice.activity.RoboActivity;
+import com.segment.android.Analytics;
+import com.segment.android.models.Props;
 
-public class WelcomeActivity extends RoboActivity{
+public class WelcomeActivity extends TrackedGuiceActivity {
+
+    private long mLoginStartTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +25,7 @@ public class WelcomeActivity extends RoboActivity{
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                mLoginStartTime = SystemClock.uptimeMillis();
                 new IntentIntegrator(WelcomeActivity.this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
             }
        }, 1000);
@@ -31,6 +36,11 @@ public class WelcomeActivity extends RoboActivity{
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
         if(resultCode == RESULT_OK) {
+
+            Analytics.track("GCT Login Scan Time Success", new Props(
+                    "value", SystemClock.uptimeMillis() - mLoginStartTime
+            ));
+
             String companyName = intentResult.getContents();
 
             Intent i = new Intent(this, WalkInstructionActivity.class);
@@ -38,6 +48,10 @@ public class WelcomeActivity extends RoboActivity{
 
             startActivity(i);
             finish();
+        }else{
+            Analytics.track("GCT Login Scan Time Unsuccessful", new Props(
+                    "value", SystemClock.uptimeMillis() - mLoginStartTime
+            ));
         }
     }
 }

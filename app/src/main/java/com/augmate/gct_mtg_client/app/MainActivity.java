@@ -37,23 +37,23 @@ public class MainActivity extends TrackedActivity {
      * RESULT_OK guarantees that at least one room was detected
      * @param requestCode BeaconActivityRequest (Beacon Scanner) or IntentIntegrator.REQUEST_CODE (QR-Code Scanner)
      * @param resultCode RESULT_OK when at least one room was detected
-     * @param data RoomOption[] of length > 0 when resultCode == RESULT_OK 
+     * @param data RoomOption[] of length > 0 when resultCode == RESULT_OK
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        
+
         Log.d(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
-        
+
         if(requestCode == BeaconActivityRequest) {
             if (resultCode == RESULT_OK) { // beacon located, found room-name, proceed to booking
                 Analytics.track("Beacon Scan", new Props(
                         "value", SystemClock.uptimeMillis() - mScanStart
                 ));
-                
+
                 Object[] roomsArr = (Object[]) data.getExtras().getSerializable("rooms");
                 RoomOption[] rooms = Arrays.copyOf(roomsArr, roomsArr.length, RoomOption[].class);
 
-                // RESULT_OK implies rooms.length > 0 
+                // RESULT_OK implies rooms.length > 0
                 assert(rooms.length > 0);
 
                 Log.d(TAG, "onActivityResult(); Beacon Scan returned " + rooms.length + " nearest rooms");
@@ -65,8 +65,8 @@ public class MainActivity extends TrackedActivity {
                 mScanStart = SystemClock.uptimeMillis();
                 new IntentIntegrator(this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
             }
-        }        
-        
+        }
+
         // qr-code scanner found room-name, proceed to boking
         else if (requestCode == IntentIntegrator.REQUEST_CODE && resultCode == RESULT_OK) {
             Analytics.track("QR Code Scan", new Props(
@@ -85,7 +85,7 @@ public class MainActivity extends TrackedActivity {
     private void startBooking(List<RoomOption> roomOptions) {
         try {
             RoomOption roomOption = roomOptions.get(0);
-            
+
             if(roomOptions.size() == 1) {
                 Log.d(TAG, "startBooking(); roomOptions contains exactly one option! Book it!");
                 startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, roomOption.name));
