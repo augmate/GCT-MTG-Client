@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}">
     <TextView
-        android:id="@+id/room_number"
+        android:id="@+id/room_name"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         />

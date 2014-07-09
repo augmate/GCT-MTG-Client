@@ -12,6 +12,7 @@ import com.segment.android.Analytics;
 import com.segment.android.TrackedActivity;
 import com.segment.android.models.Props;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -31,32 +32,32 @@ public class MainActivity extends TrackedActivity {
         startActivityForResult(new Intent(this, BeaconActivity.class), BeaconActivityRequest);
     }
 
+    /**
+     * Catches results from QRCode scanner or Beacon scanner
+     * RESULT_OK guarantees that at least one room was detected
+     * @param requestCode BeaconActivityRequest (Beacon Scanner) or IntentIntegrator.REQUEST_CODE (QR-Code Scanner)
+     * @param resultCode RESULT_OK when at least one room was detected
+     * @param data RoomOption[] of length > 0 when resultCode == RESULT_OK 
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         
-        Log.d(TAG, "request code: " + requestCode + " resultCode: " + resultCode);
+        Log.d(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
         
         if(requestCode == BeaconActivityRequest) {
-            if (resultCode == RESULT_OK) { // beacon located, found room-number, proceed to booking
+            if (resultCode == RESULT_OK) { // beacon located, found room-name, proceed to booking
                 Analytics.track("Beacon Scan", new Props(
                         "value", SystemClock.uptimeMillis() - mScanStart
                 ));
+                
+                Object[] roomsArr = (Object[]) data.getExtras().getSerializable("rooms");
+                RoomOption[] rooms = Arrays.copyOf(roomsArr, roomsArr.length, RoomOption[].class);
 
-                String beaconId = data.getExtras().getString("beaconId");
-                Double distance = data.getExtras().getDouble("distance");
+                // RESULT_OK implies rooms.length > 0 
+                assert(rooms.length > 0);
 
-                int roomNumber = 0;
-
-                if (beaconId.equals("purple"))
-                    roomNumber = 1;
-                else if (beaconId.equals("light-blue"))
-                    roomNumber = 2;
-                else if (beaconId.equals("light-green"))
-                    roomNumber = 3;
-
-                Log.d(TAG, "onActivityResult(); Beacon Scan returned room " + roomNumber + " at distance " + String.format("%.2f", distance));
-
-                startBooking(newArrayList(new RoomOption(roomNumber, 1.0f)));
+                Log.d(TAG, "onActivityResult(); Beacon Scan returned " + rooms.length + " nearest rooms");
+                startBooking(newArrayList(rooms));
 
             } else {
                 // no beacon located, launch qr-code scanner
@@ -66,7 +67,7 @@ public class MainActivity extends TrackedActivity {
             }
         }        
         
-        // qr-code scanner found room-number, proceed to boking
+        // qr-code scanner found room-name, proceed to boking
         else if (requestCode == IntentIntegrator.REQUEST_CODE && resultCode == RESULT_OK) {
             Analytics.track("QR Code Scan", new Props(
                     "value", SystemClock.uptimeMillis() - mScanStart
@@ -76,7 +77,7 @@ public class MainActivity extends TrackedActivity {
             Log.d(TAG, "onActivityResult(); QR Code Scan returned: " + intentResult.getContents());
 
             Integer roomNumber = Integer.valueOf(intentResult.getContents());
-            startBooking(newArrayList(new RoomOption(roomNumber, 1.0f)));
+            startBooking(newArrayList(new RoomOption("Room " + roomNumber, 1.0f, 0.1f)));
             finish();
         }
     }
@@ -84,12 +85,14 @@ public class MainActivity extends TrackedActivity {
     private void startBooking(List<RoomOption> roomOptions) {
         try {
             RoomOption roomOption = roomOptions.get(0);
-
-            if (roomOption.number < 1 || roomOption.number > 10) {
-                throw new IndexOutOfBoundsException();
+            
+            if(roomOptions.size() == 1) {
+                Log.d(TAG, "startBooking(); roomOptions contains exactly one option! Book it!");
+                startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, roomOption.name));
+            } else if(roomOptions.size() > 1) {
+                Log.d(TAG, "startBooking(); roomOptions contains more than one option, must disambiguate");
+                Toast.makeText(this, "Need to disambiguate rooms", Toast.LENGTH_LONG).show();
             }
-
-            startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, roomOption.number));
 
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.invalid_room_error, roomOptions), Toast.LENGTH_LONG).show();

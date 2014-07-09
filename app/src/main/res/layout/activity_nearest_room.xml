@@ -6,7 +6,7 @@
     tools:context="${packageName}.${activityClass}">
     
     <TextView
-        android:id="@+id/room_number"
+        android:id="@+id/room_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Scanning.."
@@ -18,7 +18,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="(Using BLE Beacons)"
-        android:layout_weight="1" android:textSize="20dp" android:gravity="center_horizontal|top"
+        android:layout_weight="1" android:textSize="20sp" android:gravity="center_horizontal|top"
         android:layout_marginTop="10dp"/>
     
     <LinearLayout
@@ -31,7 +31,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Beacon 1"
-                android:layout_weight="1" android:textSize="20dp" android:gravity="center_horizontal|top"
+                android:layout_weight="1" android:textSize="20sp" android:gravity="center_horizontal|top"
                 android:layout_marginTop="10dp"/>
 
         <TextView
@@ -39,7 +39,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Beacon 2"
-                android:layout_weight="1" android:textSize="20dp" android:gravity="center_horizontal|top"
+                android:layout_weight="1" android:textSize="20sp" android:gravity="center_horizontal|top"
                 android:layout_marginTop="10dp" />
 
         <TextView
@@ -47,7 +47,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Beacon 3"
-                android:layout_weight="1" android:textSize="20dp" android:gravity="center_horizontal|top"
+                android:layout_weight="1" android:textSize="20sp" android:gravity="center_horizontal|top"
                 android:layout_marginTop="10dp"/>
     </LinearLayout>
 
