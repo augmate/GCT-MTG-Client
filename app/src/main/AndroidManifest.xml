@@ -28,6 +28,8 @@
         <activity
             android:name=".app.WelcomeActivity">
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
             </intent-filter>
             <meta-data android:name="com.google.android.glass.VoiceTrigger"
@@ -35,6 +37,7 @@
         </activity>
         <activity android:name=".app.MainActivity"/>
         <activity android:name=".app.BookActivity"/>
+        <activity android:name=".app.WalkInstructionActivity"/>
         <activity android:name=".app.DeviceAuthInfoActivity"/>
         <activity android:name=".app.BeaconActivity"/>
         
