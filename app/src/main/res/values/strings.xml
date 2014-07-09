@@ -2,10 +2,11 @@
 <resources>
 
     <string name="app_name">gct_mtg_client</string>
-    <string name="voice_trigger">book room now</string>
+    <string name="voice_trigger">gct</string>
     <string name="invalid_room_error">%1$d is not a room</string>
     <string name="booking_in_progress">Booking...</string>
     <string name="auth_inst_enter_code">and enter the following code:</string>
     <string name="auth_instr_browser">On your web browser, go to</string>
+    <string name="scan_code_prompt">Scan the QR code for your company</string>
 
 </resources>
