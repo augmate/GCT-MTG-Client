@@ -23,7 +23,7 @@ public class WelcomeActivity extends RoboActivity{
             public void run() {
                 new IntentIntegrator(WelcomeActivity.this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
             }
-       }, 5000);
+       }, 1000);
     }
 
     @Override
