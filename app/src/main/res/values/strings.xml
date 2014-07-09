@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">gct_mtg_client</string>
-    <string name="voice_trigger">gct</string>
+    <string name="voice_trigger">GCT</string>
     <string name="invalid_room_error">%1$d is not a room</string>
     <string name="booking_in_progress">Booking...</string>
     <string name="auth_inst_enter_code">and enter the following code:</string>
