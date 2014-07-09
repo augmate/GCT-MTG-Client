@@ -9,7 +9,7 @@ import roboguice.inject.InjectResource;
 import roboguice.inject.InjectView;
 
 @ContentView(R.layout.walking_instructions)
-public class WalkInstructionActivity extends TrackedGuiceActivity {
+public class WalkingActivity extends TrackedGuiceActivity {
     public static final String COMPANY_NAME_EXTRA = "COMPANY_NAME_EXTRA";
 
     @InjectView(R.id.walking_instructions)

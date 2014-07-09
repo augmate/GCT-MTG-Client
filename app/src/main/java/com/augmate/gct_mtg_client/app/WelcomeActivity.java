@@ -43,8 +43,8 @@ public class WelcomeActivity extends TrackedGuiceActivity {
 
             String companyName = intentResult.getContents();
 
-            Intent i = new Intent(this, WalkInstructionActivity.class);
-            i.putExtra(WalkInstructionActivity.COMPANY_NAME_EXTRA, companyName);
+            Intent i = new Intent(this, WalkingActivity.class);
+            i.putExtra(WalkingActivity.COMPANY_NAME_EXTRA, companyName);
 
             startActivity(i);
             finish();

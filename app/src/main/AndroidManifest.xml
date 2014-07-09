@@ -37,7 +37,7 @@
         </activity>
         <activity android:name=".app.MainActivity"/>
         <activity android:name=".app.BookActivity"/>
-        <activity android:name=".app.WalkInstructionActivity"/>
+        <activity android:name=".app.WalkingActivity"/>
         <activity android:name=".app.DeviceAuthInfoActivity"/>
         <activity android:name=".app.BeaconActivity"/>
         
