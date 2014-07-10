@@ -154,8 +154,10 @@ public class Beaconizer {
             data.rooms.add("Room 2");
         } else if (beaconName.equals("light-blue")) {
             data.rooms.add("Garage");
+            data.rooms.add("Room 3");
         } else if (beaconName.equals("light-green")) {
             data.rooms.add("Room 4");
+            data.rooms.add("Room 5");
         }
 
         return data;

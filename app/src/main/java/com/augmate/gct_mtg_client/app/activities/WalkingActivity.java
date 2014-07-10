@@ -9,6 +9,8 @@ import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.Beaconizer;
 import com.augmate.gct_mtg_client.app.IReceiveRooms;
 import com.augmate.gct_mtg_client.app.RoomOption;
+import com.segment.android.Analytics;
+import com.segment.android.models.Props;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectExtra;
 import roboguice.inject.InjectResource;
@@ -61,6 +63,10 @@ public class WalkingActivity extends TrackedGuiceActivity implements IReceiveRoo
         beaconizer.destroy();
     }
 
+    /**
+     * request speech prompt
+     * @param rooms
+     */
     @Override
     public void onReceiveNearbyRooms(List<RoomOption> rooms) {
         Log.d(TAG, "Got " + rooms.size() + " rooms");
@@ -70,7 +76,7 @@ public class WalkingActivity extends TrackedGuiceActivity implements IReceiveRoo
 
         beaconizer.stopScanning();
 
-        String roomPrompt = String.format("Would you like to book %s?", rooms.get(0).name);
+        String roomPrompt = String.format("Would you like to book %s or %s?", rooms.get(0).name, rooms.get(1).name);
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -78,17 +84,37 @@ public class WalkingActivity extends TrackedGuiceActivity implements IReceiveRoo
 
         Log.d(TAG, "Starting speech request");
         startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
+
+        Analytics.track("GCT Suggestion Distance", new Props(
+                "value", rooms.get(0).distance
+        ));
     }
 
+    /**
+     * handle speech results
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-        float[] confidence = data.getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
+        if(resultCode == RESULT_OK){
+            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            float[] confidence = data.getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
 
-        for (int i=0; i<results.size(); ++i){
-            Log.d(TAG, "Voice result: " + results.get(i) + "   confidence: " + confidence[i]);
+            for (int i=0; i<results.size(); ++i){
+                Log.d(TAG, "Voice result: " + results.get(i) + "   confidence: " + confidence[i]);
+
+                tryMatchingVoiceResults(results.get(i));
+            }
+        }else{
+            Log.d(TAG, "Voice finished without okay");
         }
+    }
+
+    private void tryMatchingVoiceResults(String phrase) {
+
     }
 }
