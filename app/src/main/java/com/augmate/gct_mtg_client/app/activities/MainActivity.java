@@ -89,7 +89,7 @@ public class MainActivity extends TrackedActivity {
 
             if(roomOptions.size() == 1) {
                 Log.d(TAG, "startBooking(); roomOptions contains exactly one option! Book it!");
-                startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, roomOption.name));
+                //startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, roomOption.name));
             } else if(roomOptions.size() > 1) {
                 Log.d(TAG, "startBooking(); roomOptions contains more than one option, must disambiguate");
                 Toast.makeText(this, "Need to disambiguate rooms", Toast.LENGTH_LONG).show();

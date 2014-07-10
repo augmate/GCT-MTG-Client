@@ -9,6 +9,7 @@ import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.Beaconizer;
 import com.augmate.gct_mtg_client.app.IReceiveRooms;
 import com.augmate.gct_mtg_client.app.RoomOption;
+import com.augmate.gct_mtg_client.app.Rooms;
 import com.segment.android.Analytics;
 import com.segment.android.models.Props;
 import roboguice.inject.ContentView;
@@ -116,5 +117,7 @@ public class WalkingActivity extends TrackedGuiceActivity implements IReceiveRoo
 
     private void tryMatchingVoiceResults(String phrase) {
 
+        Rooms matchedRoom = Rooms.ROOM_1;
+        startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, matchedRoom));
     }
 }

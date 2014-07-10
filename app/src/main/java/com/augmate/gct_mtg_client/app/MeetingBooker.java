@@ -11,15 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MeetingBooker {
-    
-    private static Map<String,String> CALENDAR_IDS = new HashMap<String,String>();
+
+    private static Map<Rooms,String> CALENDAR_IDS = new HashMap<Rooms,String>();
 
     static {
-        CALENDAR_IDS.put("Room 1", "nexweb.com_tkselniqr1e6sgn207optnhil0@group.calendar.google.com");
-        CALENDAR_IDS.put("Room 2", "nexweb.com_k3mj5av5j3mn2pcop96piklcbk@group.calendar.google.com");
-        CALENDAR_IDS.put("Garage", "nexweb.com_t7rme89uccrnu2see0m6km8qk0@group.calendar.google.com");
-        CALENDAR_IDS.put("Room 4", "nexweb.com_a4jmm6foedk1r8rmjtf8v29e6k@group.calendar.google.com");
-        CALENDAR_IDS.put("Room 5", "nexweb.com_8ql9i1k0o7042omr7c2e3lpboo@group.calendar.google.com");
+        CALENDAR_IDS.put(Rooms.ROOM_1, "augmate.com_3r68n4o9i492n2ls5o43po776s@group.calendar.google.com");
+        CALENDAR_IDS.put(Rooms.ROOM_2, "augmate.com_ikbbr12a63rnsvh6it0lp72j64@group.calendar.google.com");
+        CALENDAR_IDS.put(Rooms.ROOM_3, "augmate.com_gg1vm8pdabdjrlinvtcn7ufu4g@group.calendar.google.com");
+        CALENDAR_IDS.put(Rooms.ROOM_4, "augmate.com_ktsqh7qjbqdi3rpe3nebesn240@group.calendar.google.com");
+        CALENDAR_IDS.put(Rooms.ROOM_5, "augmate.com_9qf9h796j2urm8ks1j1sg45p2o@group.calendar.google.com");
+        CALENDAR_IDS.put(Rooms.GARAGE, "augmate.com_ndigrv91nr0baictn6e1llu5qk@group.calendar.google.com");
     }
 
     private Calendar calendarService;
@@ -28,7 +29,7 @@ public class MeetingBooker {
         this.calendarService = calendarService;
     }
 
-    public boolean bookNow(String roomNumber) {
+    public boolean bookNow(Rooms roomNumber) {
         boolean wasSuccess = true;
 
         org.joda.time.DateTime roundedStartTime = getRoundedStartTime();

@@ -6,13 +6,14 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
+import com.augmate.gct_mtg_client.app.Rooms;
 import com.augmate.gct_mtg_client.app.tasks.ActivityCallbacks;
 import com.augmate.gct_mtg_client.app.tasks.BookAsyncTask;
 
 public class BookActivity extends Activity implements ActivityCallbacks {
 
     public static final String ROOM_NUMBER_EXTRA = "room_number";
-    private String roomNumber;
+    private Rooms roomNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +21,7 @@ public class BookActivity extends Activity implements ActivityCallbacks {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.booking);
 
-        roomNumber = getIntent().getStringExtra(ROOM_NUMBER_EXTRA);
+        roomNumber = (Rooms) getIntent().getSerializableExtra(ROOM_NUMBER_EXTRA);
 
         new BookAsyncTask(this, this, roomNumber).execute();
     }

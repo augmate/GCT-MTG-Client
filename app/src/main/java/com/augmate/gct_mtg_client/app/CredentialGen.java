@@ -114,6 +114,7 @@ public class CredentialGen {
                 googleCredential = getToken(device_code);
             } else {
                 Log.i("com.augmate.auth", "Found tokens, refreshing them");
+                // TODO: Refresh token expires, need to handle
                 googleCredential.refreshToken();
             }
         } catch (IOException e) {

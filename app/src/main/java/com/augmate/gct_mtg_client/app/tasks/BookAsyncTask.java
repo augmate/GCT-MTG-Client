@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import com.augmate.gct_mtg_client.app.CredentialGen;
 import com.augmate.gct_mtg_client.app.MeetingBooker;
+import com.augmate.gct_mtg_client.app.Rooms;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -14,9 +15,9 @@ public class BookAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     private Context context;
     private ActivityCallbacks activityCallbacks;
-    private String roomNumber;
+    private Rooms roomNumber;
 
-    public BookAsyncTask(Context context, ActivityCallbacks activityCallbacks, String roomNumber) {
+    public BookAsyncTask(Context context, ActivityCallbacks activityCallbacks, Rooms roomNumber) {
         this.context = context;
         this.activityCallbacks = activityCallbacks;
         this.roomNumber = roomNumber;
