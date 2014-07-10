@@ -7,7 +7,6 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
 import com.estimote.sdk.Utils;
-import com.estimote.sdk.utils.L;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,18 +16,23 @@ import java.util.List;
 class Beaconizer {
 
     private static final Region BEACON_SEARCH_MASK = new Region("rid", null, null, null);
+    public static final String TAG = "Beaconizer";
     private BeaconManager beaconManager;
+    boolean isRunning = false;
 
     public Beaconizer(Context context, final IReceiveRooms receiver) {
-        L.enableDebugLogging(true);
+        Log.d(TAG, "Beacon Service is ready. Starting ranging scan.");
 
         beaconManager = new BeaconManager(context);
-        //beaconManager.setForegroundScanPeriod(1000, 5000);
-        //beaconManager.setBackgroundScanPeriod(1000, 5000);
 
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override public void onBeaconsDiscovered(Region region, List<Beacon> rawBeacons) {
-                Log.d("BeaconActivity::onCreate()::onBeaconsDiscovered()", "BLE-scan found ranged beacons: " + rawBeacons);
+                Log.d(TAG + "::onCreate()::onBeaconsDiscovered()", "BLE-scan found ranged beacons: " + rawBeacons);
+
+                if(!isRunning) {
+                    Log.w(TAG + "::onCreate()::onBeaconsDiscovered()", "got results after stopping beacon manager");
+                    return;
+                }
 
                 // cut-off point for beacons
                 // when at 15% broadcast power, 4 seems to be far enough to ignore
@@ -66,30 +70,41 @@ class Beaconizer {
     }
 
     public void destroy() {
+        Log.d(TAG + "::destroy()", "Destroying manager..");
+        isRunning = false;
         beaconManager.disconnect();
     }
 
     public void startScanning() {
         // TODO: handle bluetooth errors
+        Log.d(TAG + "::onStart()", "Starting beacon manager..");
+        assert(isRunning);
+        isRunning = true;
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override public void onServiceReady() {
-                Log.d("BeaconActivity::onStart()", "Beacon Service is ready. Starting ranging scan.");
+                Log.d(TAG + "::onStart()", "Beacon Service is ready. Starting ranging scan.");
 
                 try {
                     beaconManager.startRanging(BEACON_SEARCH_MASK);
                 } catch (RemoteException e) {
-                    Log.e("BeaconActivity::onStart()", "BeaconManager couldn't start ranging.", e);
+                    Log.e(TAG + "::onStart()", "BeaconManager couldn't start ranging.", e);
                 }
             }
         });
     }
 
     public void stopScanning() {
+        Log.d(TAG + "::stopScanning()", "Stopping scanner");
+
+        if(!isRunning)
+            return;
+
+        isRunning = false;
         try {
             beaconManager.stopRanging(BEACON_SEARCH_MASK);
         } catch (RemoteException e) {
-            Log.e("BeaconActivity::onBeaconSuccess()", "Can't stop Beacon Manager", e);
+            Log.e(TAG + "::stopScanning()", "Can't stop Beacon Manager", e);
         }
     }
 
