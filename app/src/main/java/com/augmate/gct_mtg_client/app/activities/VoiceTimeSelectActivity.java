@@ -5,31 +5,27 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import com.augmate.gct_mtg_client.app.Room;
+import com.augmate.gct_mtg_client.app.tasks.CheckRoomAvailabilityTask;
+import com.augmate.gct_mtg_client.app.tasks.VoiceTimeSelectActivityCallbacks;
 import roboguice.inject.InjectExtra;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class VoiceTimeSelectActivity extends TrackedGuiceActivity {
+public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements VoiceTimeSelectActivityCallbacks {
 
     public static final String ROOM_NUMBER_EXTRA = "ROOM_NUMBER_EXTRA";
     public static final String TAG = VoiceTimeSelectActivity.class.getName();
     public static final int VOICE_RECOGNIZER_REQUEST_CODE = 101;
 
     @InjectExtra(ROOM_NUMBER_EXTRA)
-    Room requestedRoomName;
+    Room requestedRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String roomPrompt = String.format("Room %s is available. Book now?", requestedRoomName);
-
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, roomPrompt);
-
-        Log.d(TAG, "Requesting time select via speech-recognition..");
-        startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
+        new CheckRoomAvailabilityTask(this, this, requestedRoom).execute();
     }
 
     @Override
@@ -52,7 +48,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity {
             }
 
             if(userSaidYes) {
-                startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, requestedRoomName));
+                startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, requestedRoom));
                 return;
             }
 
@@ -62,5 +58,22 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity {
         Log.d(TAG, "Voice finished without positive user response (yes, etc)");
 
         // TODO: pop back to walking screen
+    }
+
+    @Override
+    public void onTaskSuccess(List<String> availabilities) {
+        String roomPrompt = String.format("Room %s is available. Book now?", requestedRoom);
+
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, roomPrompt);
+
+        Log.d(TAG, "Requesting time select via speech-recognition..");
+        startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
+    }
+
+    @Override
+    public void onTaskFailed() {
+
     }
 }

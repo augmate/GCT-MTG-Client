@@ -3,15 +3,18 @@ package com.augmate.gct_mtg_client.app;
 import android.util.Log;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventDateTime;
+import com.google.api.services.calendar.model.*;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 public class MeetingBooker {
 
+    public static final String TAG = "MeetingBooker";
     private static Map<Room,String> CALENDAR_IDS = new HashMap<Room,String>();
 
     static {
@@ -62,6 +65,63 @@ public class MeetingBooker {
 
     private org.joda.time.DateTime getRoundedStartTime() {
         org.joda.time.DateTime now = new org.joda.time.DateTime().now();
-        return now.minusMinutes(now.getMinuteOfHour() % 30);
+        return now.minusMinutes(now.getMinuteOfHour());
+    }
+
+    private org.joda.time.DateTime getLastBookingTime() {
+        org.joda.time.DateTime now = new org.joda.time.DateTime().now();
+        return now.withHourOfDay(19);
+    }
+
+
+    public List<String> getAvailability(Room requestedRoom) {
+
+        FreeBusyRequest freeBusyRequest = new FreeBusyRequest();
+        freeBusyRequest.setTimeMin(getDT(getRoundedStartTime().minusMinutes(1)));
+        freeBusyRequest.setTimeMax(getDT(getLastBookingTime().plusHours(4)));
+
+        FreeBusyRequestItem calendarItem = new FreeBusyRequestItem().setId(CALENDAR_IDS.get(requestedRoom));
+        freeBusyRequest.setItems(newArrayList(calendarItem));
+
+
+        // 9am-6pm
+        // for each hour, check if there is a timeperiod which claims it
+        //   if no time period claims it, then the hour is available
+        //   if any time period claims it, the hour is unavailable
+
+        try {
+            FreeBusyResponse freeBusyResponse = calendarService.freebusy().query(freeBusyRequest).execute();
+            List<TimePeriod> busyTimes = freeBusyResponse.getCalendars().get(CALENDAR_IDS.get(requestedRoom)).getBusy();
+
+            for(int i = 9; i <= 18; i ++) {
+                for(TimePeriod busyPeriod : busyTimes) {
+                    long startTimestamp = busyPeriod.getStart().getValue();
+                    long endTimestamp = busyPeriod.getEnd().getValue();
+
+                    org.joda.time.DateTime start = new org.joda.time.DateTime(startTimestamp);
+                    org.joda.time.DateTime end = new org.joda.time.DateTime(endTimestamp);
+
+                    Log.d(TAG, "busy period: " + start + " to " + end);
+
+                    int startHour = start.getHourOfDay();
+                    int endHour = end.getHourOfDay();
+
+                    if(startHour <= i && i < endHour) {
+                        Log.d(TAG, "  room is busy at " + i + ":00");
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            Log.e(TAG, "Could not get availability of room " + requestedRoom.displayName, e);
+        }
+
+
+
+        return null;
+    }
+
+    private DateTime getDT(org.joda.time.DateTime jodaTime){
+        return new DateTime(jodaTime.toDate());
     }
 }

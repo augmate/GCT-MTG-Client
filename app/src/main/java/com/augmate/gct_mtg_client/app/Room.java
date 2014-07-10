@@ -21,8 +21,8 @@ public enum Room {
     }
 
     /**
-     * for each room in the dict, have a list of strings for voice matching
-     * @return
+     * this list helps matching against the speech-api
+     * @return Map of pronunciation rules for each room
      */
     public static Map<Room, List<String>> asStringList() {
 
