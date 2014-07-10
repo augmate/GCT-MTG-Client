@@ -7,7 +7,7 @@ import roboguice.activity.RoboActivity;
 /**
  * TrackedActivity for Segment.io analytics to work with Guice
  */
-public class TrackedGuiceActivity extends RoboActivity {
+public abstract class TrackedGuiceActivity extends RoboActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
