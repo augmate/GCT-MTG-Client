@@ -17,8 +17,6 @@ public class WelcomeActivity extends TrackedGuiceActivity {
     public static final String TAG = "WelcomeActivity";
     private long mLoginStartTime;
 
-    private static boolean initialized = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +24,9 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d(TAG, "onCreate");
 
-        if(!initialized) {
+        if(savedInstanceState == null) {
+            Log.d(TAG, "Skipping scanner, recreated activity instance");
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -35,8 +35,6 @@ public class WelcomeActivity extends TrackedGuiceActivity {
                     new IntentIntegrator(WelcomeActivity.this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
                 }
             }, 1000);
-            
-            initialized = true;
         }
     }
 
