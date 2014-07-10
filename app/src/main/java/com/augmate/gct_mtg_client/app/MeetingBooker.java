@@ -12,15 +12,15 @@ import java.util.Map;
 
 public class MeetingBooker {
 
-    private static Map<Rooms,String> CALENDAR_IDS = new HashMap<Rooms,String>();
+    private static Map<Room,String> CALENDAR_IDS = new HashMap<Room,String>();
 
     static {
-        CALENDAR_IDS.put(Rooms.ROOM_1, "augmate.com_3r68n4o9i492n2ls5o43po776s@group.calendar.google.com");
-        CALENDAR_IDS.put(Rooms.ROOM_2, "augmate.com_ikbbr12a63rnsvh6it0lp72j64@group.calendar.google.com");
-        CALENDAR_IDS.put(Rooms.ROOM_3, "augmate.com_gg1vm8pdabdjrlinvtcn7ufu4g@group.calendar.google.com");
-        CALENDAR_IDS.put(Rooms.ROOM_4, "augmate.com_ktsqh7qjbqdi3rpe3nebesn240@group.calendar.google.com");
-        CALENDAR_IDS.put(Rooms.ROOM_5, "augmate.com_9qf9h796j2urm8ks1j1sg45p2o@group.calendar.google.com");
-        CALENDAR_IDS.put(Rooms.GARAGE, "augmate.com_ndigrv91nr0baictn6e1llu5qk@group.calendar.google.com");
+        CALENDAR_IDS.put(Room.ROOM_1, "augmate.com_3r68n4o9i492n2ls5o43po776s@group.calendar.google.com");
+        CALENDAR_IDS.put(Room.ROOM_2, "augmate.com_ikbbr12a63rnsvh6it0lp72j64@group.calendar.google.com");
+        CALENDAR_IDS.put(Room.ROOM_3, "augmate.com_gg1vm8pdabdjrlinvtcn7ufu4g@group.calendar.google.com");
+        CALENDAR_IDS.put(Room.ROOM_4, "augmate.com_ktsqh7qjbqdi3rpe3nebesn240@group.calendar.google.com");
+        CALENDAR_IDS.put(Room.ROOM_5, "augmate.com_9qf9h796j2urm8ks1j1sg45p2o@group.calendar.google.com");
+        CALENDAR_IDS.put(Room.GARAGE, "augmate.com_ndigrv91nr0baictn6e1llu5qk@group.calendar.google.com");
     }
 
     private Calendar calendarService;
@@ -29,7 +29,7 @@ public class MeetingBooker {
         this.calendarService = calendarService;
     }
 
-    public boolean bookNow(Rooms roomNumber) {
+    public boolean bookNow(Room roomNumber) {
         boolean wasSuccess = true;
 
         org.joda.time.DateTime roundedStartTime = getRoundedStartTime();

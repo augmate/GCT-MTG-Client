@@ -8,8 +8,8 @@ import android.widget.TextView;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.Beaconizer;
 import com.augmate.gct_mtg_client.app.IReceiveRooms;
+import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.RoomOption;
-import com.augmate.gct_mtg_client.app.Rooms;
 import com.segment.android.Analytics;
 import com.segment.android.models.Props;
 import roboguice.inject.ContentView;
@@ -105,20 +105,18 @@ public class WalkingActivity extends TrackedGuiceActivity implements IReceiveRoo
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             float[] confidence = data.getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
 
-            tryMatchingVoiceResults(results, confidence);
+            Room matchedRoom = VoiceRoomDisambiguator.match(results, confidence, Room.asStringList());
+
+            if(matchedRoom != null) {
+                startActivity(new Intent(this, VoiceTimeSelectActivity.class).putExtra(VoiceTimeSelectActivity.ROOM_NUMBER_EXTRA, matchedRoom));
+            }else{
+                Log.d(TAG, "Match not found for any result");
+            }
 
         }else{
             Log.d(TAG, "Voice finished without okay");
         }
     }
 
-    private void tryMatchingVoiceResults(ArrayList<String> results, float[] confidence) {
 
-        for (int i = 0; i < results.size(); ++i) {
-            Log.d(TAG, "Voice result: " + results.get(i) + "   confidence: " + confidence[i]);
-        }
-
-        Rooms matchedRoom = Rooms.ROOM_1;
-        startActivity(new Intent(this, VoiceTimeSelectActivity.class).putExtra(VoiceTimeSelectActivity.ROOM_NUMBER_EXTRA, matchedRoom));
-    }
 }

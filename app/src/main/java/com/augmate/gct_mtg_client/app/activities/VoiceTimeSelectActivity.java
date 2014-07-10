@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
-import com.augmate.gct_mtg_client.app.Rooms;
+import com.augmate.gct_mtg_client.app.Room;
 import roboguice.inject.InjectExtra;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity {
     public static final int VOICE_RECOGNIZER_REQUEST_CODE = 101;
 
     @InjectExtra(ROOM_NUMBER_EXTRA)
-    Rooms requestedRoomName;
+    Room requestedRoomName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
