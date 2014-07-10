@@ -1,10 +1,13 @@
-package com.augmate.gct_mtg_client.app;
+package com.augmate.gct_mtg_client.app.activities;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
 import com.augmate.gct_mtg_client.R;
+import com.augmate.gct_mtg_client.app.Beaconizer;
+import com.augmate.gct_mtg_client.app.IReceiveRooms;
+import com.augmate.gct_mtg_client.app.RoomOption;
 import com.segment.android.TrackedActivity;
 
 import java.util.List;

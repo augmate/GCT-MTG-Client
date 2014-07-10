@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-class Beaconizer {
+public class Beaconizer {
 
     private static final Region BEACON_SEARCH_MASK = new Region("rid", null, null, null);
     public static final String TAG = "Beaconizer";

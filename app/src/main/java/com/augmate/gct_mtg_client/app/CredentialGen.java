@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import com.augmate.gct_mtg_client.app.activities.DeviceAuthInfoActivity;
 import com.augmate.gct_mtg_client.app.services.GoogleOAuth2Service;
 import com.augmate.gct_mtg_client.app.services.models.DeviceAuthInfo;
 import com.augmate.gct_mtg_client.app.services.models.GoogleTokenCredential;

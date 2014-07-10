@@ -1,4 +1,4 @@
-package com.augmate.gct_mtg_client.app;
+package com.augmate.gct_mtg_client.app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,9 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
+import com.augmate.gct_mtg_client.app.RoomOption;
+import com.augmate.gct_mtg_client.app.activities.BeaconActivity;
+import com.augmate.gct_mtg_client.app.activities.BookActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.segment.android.Analytics;

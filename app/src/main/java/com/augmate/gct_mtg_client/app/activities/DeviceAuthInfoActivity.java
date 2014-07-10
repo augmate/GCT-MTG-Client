@@ -1,4 +1,4 @@
-package com.augmate.gct_mtg_client.app;
+package com.augmate.gct_mtg_client.app.activities;
 
 import android.app.Activity;
 import android.os.Bundle;

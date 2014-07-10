@@ -1,4 +1,4 @@
-package com.augmate.gct_mtg_client.app;
+package com.augmate.gct_mtg_client.app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,9 @@ import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.widget.TextView;
 import com.augmate.gct_mtg_client.R;
+import com.augmate.gct_mtg_client.app.Beaconizer;
+import com.augmate.gct_mtg_client.app.IReceiveRooms;
+import com.augmate.gct_mtg_client.app.RoomOption;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectExtra;
 import roboguice.inject.InjectResource;
