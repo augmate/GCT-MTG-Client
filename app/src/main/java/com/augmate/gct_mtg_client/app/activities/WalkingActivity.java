@@ -105,19 +105,20 @@ public class WalkingActivity extends TrackedGuiceActivity implements IReceiveRoo
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             float[] confidence = data.getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
 
-            for (int i=0; i<results.size(); ++i){
-                Log.d(TAG, "Voice result: " + results.get(i) + "   confidence: " + confidence[i]);
+            tryMatchingVoiceResults(results, confidence);
 
-                tryMatchingVoiceResults(results.get(i));
-            }
         }else{
             Log.d(TAG, "Voice finished without okay");
         }
     }
 
-    private void tryMatchingVoiceResults(String phrase) {
+    private void tryMatchingVoiceResults(ArrayList<String> results, float[] confidence) {
+
+        for (int i = 0; i < results.size(); ++i) {
+            Log.d(TAG, "Voice result: " + results.get(i) + "   confidence: " + confidence[i]);
+        }
 
         Rooms matchedRoom = Rooms.ROOM_1;
-        startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, matchedRoom));
+        startActivity(new Intent(this, VoiceTimeSelectActivity.class).putExtra(VoiceTimeSelectActivity.ROOM_NUMBER_EXTRA, matchedRoom));
     }
 }
