@@ -7,6 +7,7 @@ import android.util.Log;
 import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.tasks.CheckRoomAvailabilityTask;
 import com.augmate.gct_mtg_client.app.tasks.VoiceTimeSelectActivityCallbacks;
+import com.google.api.client.repackaged.com.google.common.base.Joiner;
 import roboguice.inject.InjectExtra;
 
 import java.util.ArrayList;
@@ -61,8 +62,11 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
     }
 
     @Override
-    public void onTaskSuccess(List<String> availabilities) {
-        String roomPrompt = String.format("Room %s is available. Book now?", requestedRoom);
+    public void onTaskSuccess(List<Integer> availabilities) {
+
+        String availableTimesString = Joiner.on(", ").join(availabilities);
+
+        String roomPrompt = String.format("Room %s is available. Book now? or " + availableTimesString, requestedRoom);
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);

@@ -74,7 +74,7 @@ public class MeetingBooker {
     }
 
 
-    public List<String> getAvailability(Room requestedRoom) {
+    public List<Integer> getAvailability(Room requestedRoom) {
 
         FreeBusyRequest freeBusyRequest = new FreeBusyRequest();
         freeBusyRequest.setTimeMin(getDT(getRoundedStartTime().minusMinutes(1)));
@@ -83,42 +83,42 @@ public class MeetingBooker {
         FreeBusyRequestItem calendarItem = new FreeBusyRequestItem().setId(CALENDAR_IDS.get(requestedRoom));
         freeBusyRequest.setItems(newArrayList(calendarItem));
 
+        List<Integer> availableSlots = newArrayList();
 
-        // 9am-6pm
-        // for each hour, check if there is a timeperiod which claims it
-        //   if no time period claims it, then the hour is available
-        //   if any time period claims it, the hour is unavailable
 
         try {
             FreeBusyResponse freeBusyResponse = calendarService.freebusy().query(freeBusyRequest).execute();
-            List<TimePeriod> busyTimes = freeBusyResponse.getCalendars().get(CALENDAR_IDS.get(requestedRoom)).getBusy();
 
-            for(int i = 9; i <= 18; i ++) {
+            List<TimePeriod> busyTimes = freeBusyResponse.getCalendars().get(CALENDAR_IDS.get(requestedRoom)).getBusy();
+            Log.d(TAG, "Found " + busyTimes.size() + " busy slots for " + requestedRoom.displayName);
+
+            for(int hourSlot = getRoundedStartTime().getHourOfDay(); hourSlot <= 22; hourSlot ++) {
+                org.joda.time.DateTime timeSlot = new org.joda.time.DateTime().withHourOfDay(hourSlot).withMinuteOfHour(30);
+
+                Boolean isBusy = false;
+
                 for(TimePeriod busyPeriod : busyTimes) {
                     long startTimestamp = busyPeriod.getStart().getValue();
                     long endTimestamp = busyPeriod.getEnd().getValue();
 
-                    org.joda.time.DateTime start = new org.joda.time.DateTime(startTimestamp);
-                    org.joda.time.DateTime end = new org.joda.time.DateTime(endTimestamp);
+                    org.joda.time.DateTime busyStart = new org.joda.time.DateTime(startTimestamp);
+                    org.joda.time.DateTime busyEnd = new org.joda.time.DateTime(endTimestamp);
 
-                    Log.d(TAG, "busy period: " + start + " to " + end);
-
-                    int startHour = start.getHourOfDay();
-                    int endHour = end.getHourOfDay();
-
-                    if(startHour <= i && i < endHour) {
-                        Log.d(TAG, "  room is busy at " + i + ":00");
+                    if(timeSlot.isAfter(busyStart) && timeSlot.isBefore(busyEnd)) {
+                        Log.d(TAG, "Room is busy at " + hourSlot);
+                        isBusy = true;
                     }
                 }
+
+                if(!isBusy)
+                    availableSlots.add(hourSlot);
             }
 
         } catch (IOException e) {
             Log.e(TAG, "Could not get availability of room " + requestedRoom.displayName, e);
         }
 
-
-
-        return null;
+        return availableSlots;
     }
 
     private DateTime getDT(org.joda.time.DateTime jodaTime){

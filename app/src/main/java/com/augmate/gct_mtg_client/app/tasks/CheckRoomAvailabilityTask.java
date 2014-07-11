@@ -11,10 +11,9 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.calendar.Calendar;
 import roboguice.util.SafeAsyncTask;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class CheckRoomAvailabilityTask extends SafeAsyncTask<List<String>> {
+public class CheckRoomAvailabilityTask extends SafeAsyncTask<List<Integer>> {
 
     private Context context;
     private VoiceTimeSelectActivityCallbacks callbacks;
@@ -27,18 +26,16 @@ public class CheckRoomAvailabilityTask extends SafeAsyncTask<List<String>> {
     }
 
     @Override
-    public List<String> call() throws Exception {
+    public List<Integer> call() throws Exception {
         GoogleCredential credentials = new CredentialGen(context).getCreditials();
 
         Calendar calendarService = buildCalendarService(credentials);
 
-        new MeetingBooker(calendarService).getAvailability(requestedRoom);
-
-        return new ArrayList<String>();
+        return new MeetingBooker(calendarService).getAvailability(requestedRoom);
     }
 
     @Override
-    protected void onSuccess(List<String> availabilities) throws Exception {
+    protected void onSuccess(List<Integer> availabilities) throws Exception {
         super.onSuccess(availabilities);
 
         callbacks.onTaskSuccess(availabilities);
