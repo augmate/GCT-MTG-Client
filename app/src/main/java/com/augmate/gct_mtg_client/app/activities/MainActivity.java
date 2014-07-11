@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+// FIXME: defunc
 public class MainActivity extends TrackedActivity {
     final static int BeaconActivityRequest = 2;
     private static final String TAG = "MainActivity";

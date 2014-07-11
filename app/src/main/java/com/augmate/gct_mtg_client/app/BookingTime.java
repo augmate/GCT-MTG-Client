@@ -11,7 +11,7 @@ public enum BookingTime {
     TIME_9AM("9am", 9),
     TIME_10AM("10am", 10),
     TIME_11AM("11am", 11),
-    TIME_12PM("12pm", 12 ),
+    TIME_12PM("12pm", 12),
     TIME_1PM("1pm", 13),
     TIME_2PM("2pm", 14),
     TIME_3PM("3pm", 15),
@@ -36,12 +36,12 @@ public enum BookingTime {
         map.put(TIME_10AM, newArrayList("10", "ten"));
         map.put(TIME_11AM, newArrayList("11", "eleven"));
         map.put(TIME_12PM, newArrayList("12", "twelve", "noon"));
-        map.put(TIME_1PM, newArrayList("1", "one", "won"));
-        map.put(TIME_2PM, newArrayList("2", "two", "too", "to"));
-        map.put(TIME_3PM, newArrayList("3", "three"));
-        map.put(TIME_4PM, newArrayList("4", "four", "for"));
-        map.put(TIME_5PM, newArrayList("5", "five"));
-        map.put(TIME_6PM, newArrayList("6", "six"));
+        map.put(TIME_1PM, newArrayList("1", "13", "one", "won"));
+        map.put(TIME_2PM, newArrayList("2", "14", "two", "too", "to"));
+        map.put(TIME_3PM, newArrayList("3", "15", "three"));
+        map.put(TIME_4PM, newArrayList("4", "16", "four", "for"));
+        map.put(TIME_5PM, newArrayList("5", "17", "five"));
+        map.put(TIME_6PM, newArrayList("6", "18", "six"));
 
         return map;
     }

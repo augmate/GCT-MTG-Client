@@ -1,9 +1,10 @@
 package com.augmate.gct_mtg_client.app;
 
 import android.util.Log;
-import com.google.api.client.util.DateTime;
+import android.widget.Toast;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,57 +34,72 @@ public class MeetingBooker {
         this.calendarService = calendarService;
     }
 
-    // TODO: handle BookingTime.NONE
     public boolean bookNow(Room roomNumber, BookingTime bookingTime) {
-        boolean wasSuccess = true;
-
-        org.joda.time.DateTime bookingStartTime = org.joda.time.DateTime.now();
-        bookingStartTime = bookingStartTime.withMinuteOfHour(0).withSecondOfMinute(0);
-
+        
+        if(bookingTime == BookingTime.NONE) {
+            Log.d(TAG, "Booking time is None. Not booking.");
+            return false;
+        }
+        
+        // either book now or for a specific hour
+        DateTime bookingStartTime = getCurrentHour();
+        
         if(bookingTime != BookingTime.NOW) {
-            bookingStartTime.withHourOfDay(bookingTime.hour);
+            bookingStartTime = bookingStartTime.withHourOfDay(bookingTime.hour);
         }
 
-        EventDateTime startTime = convertJodaToCalendarEventTime(bookingStartTime);
-        EventDateTime endTime = convertJodaToCalendarEventTime(bookingStartTime.plusHours(1));
+        EventDateTime startTime = toCalendarEventTime(bookingStartTime);
+        EventDateTime endTime = toCalendarEventTime(bookingStartTime.plusHours(1));
 
         Event event = new Event()
                 .setSummary("Booking")
                 .setStart(startTime)
                 .setEnd(endTime);
 
+        boolean roomBooked = true;
+
+        Log.d(TAG, String.format("Attempting to book room '%s' for %s", roomNumber, event.getStart()));
+        
         try {
             calendarService.events().insert(CALENDAR_IDS.get(roomNumber), event).execute();
-            Log.d("com.augmate.booking", String.format("Meeting room %s booked for %s", roomNumber, event.getStart()));
-        } catch (IOException e) {
+            Log.d(TAG, String.format("Meeting room '%s' booked for %s", roomNumber, event.getStart()));
+        } catch(com.google.api.client.googleapis.json.GoogleJsonResponseException e) {
+            Log.e(TAG, "Google Calendar problem", e);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to insert event into google calendar", e);
             e.printStackTrace();
-            wasSuccess = false;
-        } catch(IndexOutOfBoundsException e){
-            e.printStackTrace();
-            wasSuccess = false;
+            roomBooked = false;
         }
 
-        return wasSuccess;
+        return roomBooked;
     }
 
-    private EventDateTime convertJodaToCalendarEventTime(org.joda.time.DateTime roundedStartTime) {
-        return new EventDateTime().setDateTime(new DateTime(roundedStartTime.toDate()));
+    /**
+     * joda time -> gcal time -> gcal event time
+     * @param jodaTime DateTime from Joda
+     * @return EventDateTime for google calendar events
+     */
+    private EventDateTime toCalendarEventTime(DateTime jodaTime) {
+        return new EventDateTime().setDateTime(new com.google.api.client.util.DateTime(jodaTime.toDate()));
     }
 
-    private org.joda.time.DateTime getRoundedStartTime() {
-        return org.joda.time.DateTime.now().withMinuteOfHour(0).withSecondOfMinute(0);
+    private com.google.api.client.util.DateTime toCalenderTime(DateTime jodaTime){
+        return new com.google.api.client.util.DateTime(jodaTime.toDate());
     }
 
-    private DateTime getMaxTimeForCalendar() {
-        return getDT(org.joda.time.DateTime.now().withHourOfDay(LAST_BOOKABLE_SLOT + 1));
+    private DateTime getCurrentHour() {
+        return DateTime.now().withMinuteOfHour(0).withSecondOfMinute(0);
     }
 
+    private com.google.api.client.util.DateTime getMaxTimeForCalendar() {
+        return toCalenderTime(DateTime.now().withHourOfDay(LAST_BOOKABLE_SLOT + 1));
+    }
 
     public List<Integer> getAvailability(Room requestedRoom) {
 
         // requests busy periods from google calendar
         FreeBusyRequest freeBusyRequest = new FreeBusyRequest();
-        freeBusyRequest.setTimeMin(getDT(getRoundedStartTime().minusMinutes(1)));
+        freeBusyRequest.setTimeMin(toCalenderTime(getCurrentHour().minusMinutes(1)));
         freeBusyRequest.setTimeMax(getMaxTimeForCalendar());
 
         FreeBusyRequestItem calendarItem = new FreeBusyRequestItem().setId(CALENDAR_IDS.get(requestedRoom));
@@ -102,21 +118,19 @@ public class MeetingBooker {
             // from current hour until the hour we would want to book
             //   check if hour is inside one of the busy periods
             //     if it isn't, add it to the available hours list
-            for(int hourSlot = getRoundedStartTime().getHourOfDay(); hourSlot <= LAST_BOOKABLE_SLOT; hourSlot ++) {
-                org.joda.time.DateTime timeSlot = new org.joda.time.DateTime().withHourOfDay(hourSlot).withMinuteOfHour(30);
+            for(int hourSlot = getCurrentHour().getHourOfDay(); hourSlot <= LAST_BOOKABLE_SLOT; hourSlot ++) {
+                DateTime timeSlot = new DateTime().withHourOfDay(hourSlot).withMinuteOfHour(30);
 
                 Boolean isBusy = false;
 
                 for(TimePeriod busyPeriod : busyTimes) {
-                    long startTimestamp = busyPeriod.getStart().getValue();
-                    long endTimestamp = busyPeriod.getEnd().getValue();
-
-                    org.joda.time.DateTime busyStart = new org.joda.time.DateTime(startTimestamp);
-                    org.joda.time.DateTime busyEnd = new org.joda.time.DateTime(endTimestamp);
+                    DateTime busyStart = new DateTime(busyPeriod.getStart().getValue());
+                    DateTime busyEnd = new DateTime(busyPeriod.getEnd().getValue());
 
                     if(timeSlot.isAfter(busyStart) && timeSlot.isBefore(busyEnd)) {
                         Log.d(TAG, "Room is busy at " + hourSlot);
                         isBusy = true;
+                        break;
                     }
                 }
 
@@ -129,9 +143,5 @@ public class MeetingBooker {
         }
 
         return availableSlots;
-    }
-
-    private DateTime getDT(org.joda.time.DateTime jodaTime){
-        return new DateTime(jodaTime.toDate());
     }
 }

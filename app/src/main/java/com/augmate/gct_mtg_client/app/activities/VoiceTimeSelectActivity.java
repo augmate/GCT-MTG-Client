@@ -34,7 +34,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK){
+        if(resultCode == RESULT_OK) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             Log.d(TAG, "Got " + results.size() + " results from Speech API");
 
@@ -42,17 +42,21 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
             BookingTime bookingTime = VoiceTimeDisambiguator.match(voiceString, BookingTime.asStringList());
 
-            Intent intent = new Intent(this, BookingActivity.class);
-            intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom);
-            intent.putExtra(BookingActivity.BOOKING_TIME_EXTRA, bookingTime);
+            Log.d(TAG, "Booking time recognized as: " + bookingTime);
+            
+            if(bookingTime != BookingTime.NONE) {
 
-            startActivity(intent);
+                Intent intent = new Intent(this, BookingActivity.class);
+                intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom);
+                intent.putExtra(BookingActivity.BOOKING_TIME_EXTRA, bookingTime);
+
+                startActivity(intent);
+                return;
+            }
         }
-
-        // user said no, or whatever they said wasn't recognized
+        
+        // user said None, or whatever they said wasn't recognized
         Log.d(TAG, "Voice finished without positive user response (yes, etc)");
-
-        // TODO: pop back to walking screen
     }
 
     @Override

@@ -22,6 +22,7 @@ public class VoiceTimeDisambiguator {
         for (BookingTime time : roomExpectedMatches.keySet()) {
             for (String expectedVoiceResult : roomExpectedMatches.get(time)) {
                 if (actualVoiceResult.equalsIgnoreCase(expectedVoiceResult)) {
+                    Log.d(TAG, "Matched: " + actualVoiceResult + " to time " + time.hour + " using " + expectedVoiceResult);
                     return time;
                 }
             }
