@@ -15,6 +15,7 @@ import static com.google.common.collect.Lists.newArrayList;
 public class MeetingBooker {
 
     public static final String TAG = "MeetingBooker";
+    public static final int LAST_BOOKABLE_SLOT = 18;
     private static Map<Room,String> CALENDAR_IDS = new HashMap<Room,String>();
 
     static {
@@ -32,13 +33,19 @@ public class MeetingBooker {
         this.calendarService = calendarService;
     }
 
-    public boolean bookNow(Room roomNumber) {
+    // TODO: handle BookingTime.NONE
+    public boolean bookNow(Room roomNumber, BookingTime bookingTime) {
         boolean wasSuccess = true;
 
-        org.joda.time.DateTime roundedStartTime = getRoundedStartTime();
+        org.joda.time.DateTime bookingStartTime = org.joda.time.DateTime.now();
+        bookingStartTime = bookingStartTime.withMinuteOfHour(0).withSecondOfMinute(0);
 
-        EventDateTime startTime = getEventDateTime(roundedStartTime);
-        EventDateTime endTime = getEventDateTime(roundedStartTime.plusMinutes(30));
+        if(bookingTime != BookingTime.NOW) {
+            bookingStartTime.withHourOfDay(bookingTime.hour);
+        }
+
+        EventDateTime startTime = convertJodaToCalendarEventTime(bookingStartTime);
+        EventDateTime endTime = convertJodaToCalendarEventTime(bookingStartTime.plusHours(1));
 
         Event event = new Event()
                 .setSummary("Booking")
@@ -59,30 +66,30 @@ public class MeetingBooker {
         return wasSuccess;
     }
 
-    private EventDateTime getEventDateTime(org.joda.time.DateTime roundedStartTime) {
+    private EventDateTime convertJodaToCalendarEventTime(org.joda.time.DateTime roundedStartTime) {
         return new EventDateTime().setDateTime(new DateTime(roundedStartTime.toDate()));
     }
 
     private org.joda.time.DateTime getRoundedStartTime() {
-        org.joda.time.DateTime now = new org.joda.time.DateTime().now();
-        return now.minusMinutes(now.getMinuteOfHour());
+        return org.joda.time.DateTime.now().withMinuteOfHour(0).withSecondOfMinute(0);
     }
 
-    private org.joda.time.DateTime getLastBookingTime() {
-        org.joda.time.DateTime now = new org.joda.time.DateTime().now();
-        return now.withHourOfDay(19);
+    private DateTime getMaxTimeForCalendar() {
+        return getDT(org.joda.time.DateTime.now().withHourOfDay(LAST_BOOKABLE_SLOT + 1));
     }
 
 
     public List<Integer> getAvailability(Room requestedRoom) {
 
+        // requests busy periods from google calendar
         FreeBusyRequest freeBusyRequest = new FreeBusyRequest();
         freeBusyRequest.setTimeMin(getDT(getRoundedStartTime().minusMinutes(1)));
-        freeBusyRequest.setTimeMax(getDT(getLastBookingTime().plusHours(4)));
+        freeBusyRequest.setTimeMax(getMaxTimeForCalendar());
 
         FreeBusyRequestItem calendarItem = new FreeBusyRequestItem().setId(CALENDAR_IDS.get(requestedRoom));
         freeBusyRequest.setItems(newArrayList(calendarItem));
 
+        // build up available hours
         List<Integer> availableSlots = newArrayList();
 
 
@@ -92,7 +99,10 @@ public class MeetingBooker {
             List<TimePeriod> busyTimes = freeBusyResponse.getCalendars().get(CALENDAR_IDS.get(requestedRoom)).getBusy();
             Log.d(TAG, "Found " + busyTimes.size() + " busy slots for " + requestedRoom.displayName);
 
-            for(int hourSlot = getRoundedStartTime().getHourOfDay(); hourSlot <= 22; hourSlot ++) {
+            // from current hour until the hour we would want to book
+            //   check if hour is inside one of the busy periods
+            //     if it isn't, add it to the available hours list
+            for(int hourSlot = getRoundedStartTime().getHourOfDay(); hourSlot <= LAST_BOOKABLE_SLOT; hourSlot ++) {
                 org.joda.time.DateTime timeSlot = new org.joda.time.DateTime().withHourOfDay(hourSlot).withMinuteOfHour(30);
 
                 Boolean isBusy = false;

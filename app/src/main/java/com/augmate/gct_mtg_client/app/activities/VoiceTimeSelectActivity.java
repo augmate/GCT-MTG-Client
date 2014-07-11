@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
+import com.augmate.gct_mtg_client.app.BookingTime;
 import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.tasks.CheckRoomAvailabilityTask;
 import com.augmate.gct_mtg_client.app.tasks.VoiceTimeSelectActivityCallbacks;
@@ -35,24 +36,17 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
         if(resultCode == RESULT_OK){
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            float[] confidence = data.getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
+            Log.d(TAG, "Got " + results.size() + " results from Speech API");
 
-            boolean userSaidYes = true;
+            String voiceString = results.get(0);
 
-            for (int i=0; i<results.size(); ++i){
-                Log.d(TAG, "Voice result: " + results.get(i) + "   confidence: " + confidence[i]);
+            BookingTime bookingTime = VoiceTimeDisambiguator.match(voiceString, BookingTime.asStringList());
 
-                if(results.get(i).equals("yes")) {
-                    userSaidYes = true;
-                    break;
-                }
-            }
+            Intent intent = new Intent(this, BookingActivity.class);
+            intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom);
+            intent.putExtra(BookingActivity.BOOKING_TIME_EXTRA, bookingTime);
 
-            if(userSaidYes) {
-                startActivity(new Intent(this, BookActivity.class).putExtra(BookActivity.ROOM_NUMBER_EXTRA, requestedRoom));
-                return;
-            }
-
+            startActivity(intent);
         }
 
         // user said no, or whatever they said wasn't recognized

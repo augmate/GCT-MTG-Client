@@ -31,7 +31,7 @@ public enum Room {
         map.put(ROOM_1, newArrayList("room 1", "room one"));
         map.put(ROOM_2, newArrayList("room 2", "room two"));
         map.put(ROOM_3, newArrayList("room 3", "room three"));
-        map.put(ROOM_4, newArrayList("room 4", "room four"));
+        map.put(ROOM_4, newArrayList("room 4", "room four", "room for"));
         map.put(ROOM_5, newArrayList("room 5", "room five"));
         map.put(GARAGE, newArrayList("garage", "garage room"));
 

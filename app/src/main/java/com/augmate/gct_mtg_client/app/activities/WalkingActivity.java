@@ -103,9 +103,12 @@ public class WalkingActivity extends TrackedGuiceActivity implements IReceiveRoo
 
         if(resultCode == RESULT_OK){
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            float[] confidence = data.getFloatArrayExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
 
-            Room matchedRoom = VoiceRoomDisambiguator.match(results, confidence, Room.asStringList());
+            for(String result: results){
+                Log.d(TAG, "Voice results: " + result);
+            }
+
+            Room matchedRoom = VoiceRoomDisambiguator.match(results, Room.asStringList());
 
             if(matchedRoom != null) {
                 startActivity(new Intent(this, VoiceTimeSelectActivity.class).putExtra(VoiceTimeSelectActivity.ROOM_NUMBER_EXTRA, matchedRoom));

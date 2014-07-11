@@ -36,7 +36,7 @@
                        android:resource="@xml/voice_triggers" />
         </activity>
         <activity android:name=".app.activities.MainActivity"/>
-        <activity android:name=".app.activities.BookActivity"/>
+        <activity android:name=".app.activities.BookingActivity"/>
         <activity android:name=".app.activities.VoiceTimeSelectActivity"/>
         <activity android:name=".app.activities.WalkingActivity"/>
         <activity android:name=".app.activities.DeviceAuthInfoActivity"/>

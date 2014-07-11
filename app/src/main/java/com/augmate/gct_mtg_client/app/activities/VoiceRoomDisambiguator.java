@@ -14,15 +14,14 @@ public class VoiceRoomDisambiguator {
     /**
      * given results from speech-api, find the right room, given a dictionary of possible choices
      * @param voiceResults
-     * @param voiceConfidences
      * @param roomExpectedMatches
      * @return Room or NULL if nothing was found
      */
-    public static Room match(ArrayList<String> voiceResults, float[] voiceConfidences, Map<Room, List<String>> roomExpectedMatches) {
+    public static Room match(ArrayList<String> voiceResults, Map<Room, List<String>> roomExpectedMatches) {
 
         for (int i = 0; i < voiceResults.size(); ++i) {
             String actualVoiceResult = voiceResults.get(i);
-            Log.d(TAG, "Voice result: " + actualVoiceResult + "   confidence: " + voiceConfidences[i]);
+            Log.d(TAG, "Voice result: " + actualVoiceResult);
 
             for(Room room : roomExpectedMatches.keySet()) {
                 for (String expectedVoiceResult : roomExpectedMatches.get(room)) {

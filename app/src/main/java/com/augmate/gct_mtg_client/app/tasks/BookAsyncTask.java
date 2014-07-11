@@ -2,6 +2,7 @@ package com.augmate.gct_mtg_client.app.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import com.augmate.gct_mtg_client.app.BookingTime;
 import com.augmate.gct_mtg_client.app.CredentialGen;
 import com.augmate.gct_mtg_client.app.MeetingBooker;
 import com.augmate.gct_mtg_client.app.Room;
@@ -16,11 +17,13 @@ public class BookAsyncTask extends AsyncTask<Void, Void, Boolean> {
     private Context context;
     private ActivityCallbacks activityCallbacks;
     private Room roomNumber;
+    private BookingTime bookingTime;
 
-    public BookAsyncTask(Context context, ActivityCallbacks activityCallbacks, Room roomNumber) {
+    public BookAsyncTask(Context context, ActivityCallbacks activityCallbacks, Room roomNumber, BookingTime bookingTime) {
         this.context = context;
         this.activityCallbacks = activityCallbacks;
         this.roomNumber = roomNumber;
+        this.bookingTime = bookingTime;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class BookAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
         Calendar calendarService = buildCalendarService(credentials);
 
-        return new MeetingBooker(calendarService).bookNow(roomNumber);
+        return new MeetingBooker(calendarService).bookNow(roomNumber, bookingTime);
     }
 
     private Calendar buildCalendarService(Credential credential) {
