@@ -1,6 +1,7 @@
 package com.augmate.gct_mtg_client.app.tasks;
 
 import android.content.Context;
+import com.augmate.gct_mtg_client.app.BookingTime;
 import com.augmate.gct_mtg_client.app.CredentialGen;
 import com.augmate.gct_mtg_client.app.MeetingBooker;
 import com.augmate.gct_mtg_client.app.Room;
@@ -13,7 +14,7 @@ import roboguice.util.SafeAsyncTask;
 
 import java.util.List;
 
-public class CheckRoomAvailabilityTask extends SafeAsyncTask<List<Integer>> {
+public class CheckRoomAvailabilityTask extends SafeAsyncTask<List<BookingTime>> {
 
     private Context context;
     private VoiceTimeSelectActivityCallbacks callbacks;
@@ -26,7 +27,7 @@ public class CheckRoomAvailabilityTask extends SafeAsyncTask<List<Integer>> {
     }
 
     @Override
-    public List<Integer> call() throws Exception {
+    public List<BookingTime> call() throws Exception {
         GoogleCredential credentials = new CredentialGen(context).getCreditials();
 
         Calendar calendarService = buildCalendarService(credentials);
@@ -35,7 +36,7 @@ public class CheckRoomAvailabilityTask extends SafeAsyncTask<List<Integer>> {
     }
 
     @Override
-    protected void onSuccess(List<Integer> availabilities) throws Exception {
+    protected void onSuccess(List<BookingTime> availabilities) throws Exception {
         super.onSuccess(availabilities);
 
         callbacks.onTaskSuccess(availabilities);

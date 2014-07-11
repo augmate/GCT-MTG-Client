@@ -1,7 +1,6 @@
 package com.augmate.gct_mtg_client.app;
 
 import android.util.Log;
-import android.widget.Toast;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
 import org.joda.time.DateTime;
@@ -95,7 +94,7 @@ public class MeetingBooker {
         return toCalenderTime(DateTime.now().withHourOfDay(LAST_BOOKABLE_SLOT + 1));
     }
 
-    public List<Integer> getAvailability(Room requestedRoom) {
+    public List<BookingTime> getAvailability(Room requestedRoom) {
 
         // requests busy periods from google calendar
         FreeBusyRequest freeBusyRequest = new FreeBusyRequest();
@@ -106,7 +105,7 @@ public class MeetingBooker {
         freeBusyRequest.setItems(newArrayList(calendarItem));
 
         // build up available hours
-        List<Integer> availableSlots = newArrayList();
+        List<BookingTime> availableSlots = newArrayList();
 
 
         try {
@@ -135,7 +134,7 @@ public class MeetingBooker {
                 }
 
                 if(!isBusy)
-                    availableSlots.add(hourSlot);
+                    availableSlots.add(BookingTime.fromHour(hourSlot));
             }
 
         } catch (IOException e) {

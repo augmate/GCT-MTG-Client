@@ -60,7 +60,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
     }
 
     @Override
-    public void onTaskSuccess(List<Integer> availabilities) {
+    public void onTaskSuccess(List<BookingTime> availabilities) {
 
         String availableTimesString = Joiner.on(", ").join(availabilities);
 
@@ -72,10 +72,5 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
         Log.d(TAG, "Requesting time select via speech-recognition..");
         startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
-    }
-
-    @Override
-    public void onTaskFailed() {
-
     }
 }

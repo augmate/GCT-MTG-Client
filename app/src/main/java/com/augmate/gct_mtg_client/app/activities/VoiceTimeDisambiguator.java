@@ -16,8 +16,11 @@ public class VoiceTimeDisambiguator {
      * @param roomExpectedMatches Map of possible matches we care about
      * @return TimeResult representing the hour we want to book, or none
      */
+
     public static BookingTime match(String actualVoiceResult, Map<BookingTime, List<String>> roomExpectedMatches) {
         Log.d(TAG, "Voice result: " + actualVoiceResult);
+
+        actualVoiceResult = actualVoiceResult.replace(".", "");
 
         for (BookingTime time : roomExpectedMatches.keySet()) {
             for (String expectedVoiceResult : roomExpectedMatches.get(time)) {
