@@ -84,6 +84,11 @@ public class MainActivity extends TrackedActivity {
         }
     }
 
+    public void onPause(){
+        super.onPause();
+        //super.onDestroy();
+    }
+
     private void startBooking(List<RoomOption> roomOptions) {
         try {
             RoomOption roomOption = roomOptions.get(0);
