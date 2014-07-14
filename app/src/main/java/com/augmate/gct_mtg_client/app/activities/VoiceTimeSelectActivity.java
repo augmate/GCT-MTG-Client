@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.speech.RecognizerIntent;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.BookingTime;
@@ -41,6 +42,8 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         fetchRoomAvailabilityStart = SystemClock.uptimeMillis();
 
         new CheckRoomAvailabilityTask(this, this, requestedRoom).execute();
@@ -61,19 +64,24 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
         //TODO: Fix this cache
         this.availabilities = availabilities;
 
-        String availableTimesString = Joiner.on(", ").join(availabilities);
+        if(!availabilities.isEmpty()) {
+            String availableTimesString = Joiner.on(", ").join(availabilities);
 
-        String roomPrompt = String.format("Room %s is available. Book now? or " + availableTimesString, requestedRoom);
+            String roomPrompt = String.format("Room %s is available. Book now? or %s", requestedRoom.displayName, availableTimesString);
 
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, roomPrompt);
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, roomPrompt);
 
-        Log.d(TAG, "Requesting time select via speech-recognition..");
+            Log.d(TAG, "Requesting time select via speech-recognition..");
 
-        // we track a new voice input step every time
-        voiceTimeRawInputStart = SystemClock.uptimeMillis();
-        startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
+            // we track a new voice input step every time
+            voiceTimeRawInputStart = SystemClock.uptimeMillis();
+            startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
+        }else{
+            Toast.makeText(this, "Cannot fetch room availability", Toast.LENGTH_LONG);
+            finish();
+        }
     }
 
     @Override
@@ -104,7 +112,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
                     ));
 
                     Intent intent = new Intent(this, BookingActivity.class);
-                    intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom.displayName);
+                    intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom);
                     intent.putExtra(BookingActivity.BOOKING_TIME_EXTRA, bookingTime);
                     intent.putExtra(BookingActivity.COMPANY_NAME_EXTRA, companyName);
 

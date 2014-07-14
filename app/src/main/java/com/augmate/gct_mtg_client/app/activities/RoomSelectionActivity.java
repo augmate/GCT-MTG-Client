@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
@@ -30,6 +31,7 @@ public class RoomSelectionActivity extends TrackedGuiceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         String walkingInstructions = String.format(walkingInstructionsTemplate, companyName);
         walkingInstructionsView.setText(walkingInstructions);
@@ -62,6 +64,7 @@ public class RoomSelectionActivity extends TrackedGuiceActivity {
                         .putExtra(VoiceTimeSelectActivity.COMPANY_NAME_EXTRA, companyName);
 
                 startActivity(intent);
+                finish();
 
             } catch (Exception e) {
                 Log.e(TAG, "Invalid room qr code scanned");
