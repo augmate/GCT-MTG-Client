@@ -19,9 +19,12 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
     public static final String ROOM_NUMBER_EXTRA = "ROOM_NUMBER_EXTRA";
     public static final String TAG = VoiceTimeSelectActivity.class.getName();
     public static final int VOICE_RECOGNIZER_REQUEST_CODE = 101;
+    public static final String COMPANY_NAME_EXTRA = "COMPANY_NAME_EXTRA";
 
     @InjectExtra(ROOM_NUMBER_EXTRA)
     Room requestedRoom;
+    @InjectExtra(COMPANY_NAME_EXTRA)
+    String companyName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +52,13 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
                 Intent intent = new Intent(this, BookingActivity.class);
                 intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom);
                 intent.putExtra(BookingActivity.BOOKING_TIME_EXTRA, bookingTime);
+                intent.putExtra(BookingActivity.COMPANY_NAME_EXTRA, companyName);
 
                 startActivity(intent);
                 return;
             }
         }
-        
+
         // user said None, or whatever they said wasn't recognized
         Log.d(TAG, "Voice finished without positive user response (yes, etc)");
     }

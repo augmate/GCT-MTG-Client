@@ -33,7 +33,7 @@ public class MeetingBooker {
         this.calendarService = calendarService;
     }
 
-    public boolean bookNow(Room roomNumber, BookingTime bookingTime) {
+    public boolean bookNow(Room roomNumber, BookingTime bookingTime, String companyName) {
         
         if(bookingTime == BookingTime.NONE) {
             Log.d(TAG, "Booking time is None. Not booking.");
@@ -57,7 +57,7 @@ public class MeetingBooker {
 
         boolean roomBooked = true;
 
-        Log.d(TAG, String.format("Attempting to book room '%s' for %s", roomNumber, event.getStart()));
+        Log.d(TAG, String.format("Attempting to book room '%s' at %s for %s", roomNumber, event.getStart(), companyName));
         
         try {
             calendarService.events().insert(CALENDAR_IDS.get(roomNumber), event).execute();

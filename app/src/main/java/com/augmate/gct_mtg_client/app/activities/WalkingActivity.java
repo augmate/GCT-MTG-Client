@@ -111,7 +111,11 @@ public class WalkingActivity extends TrackedGuiceActivity implements IReceiveRoo
             Room matchedRoom = VoiceRoomDisambiguator.match(results, Room.asStringList());
 
             if(matchedRoom != null) {
-                startActivity(new Intent(this, VoiceTimeSelectActivity.class).putExtra(VoiceTimeSelectActivity.ROOM_NUMBER_EXTRA, matchedRoom));
+                Intent intent = new Intent(this, VoiceTimeSelectActivity.class)
+                        .putExtra(VoiceTimeSelectActivity.ROOM_NUMBER_EXTRA, matchedRoom)
+                        .putExtra(VoiceTimeSelectActivity.COMPANY_NAME_EXTRA, companyName);
+
+                startActivity(intent);
             }else{
                 Log.d(TAG, "Match not found for any result");
             }

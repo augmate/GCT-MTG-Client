@@ -1,6 +1,5 @@
 package com.augmate.gct_mtg_client.app.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -10,29 +9,36 @@ import com.augmate.gct_mtg_client.app.BookingTime;
 import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.tasks.ActivityCallbacks;
 import com.augmate.gct_mtg_client.app.tasks.BookAsyncTask;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectExtra;
 
-public class BookingActivity extends Activity implements ActivityCallbacks {
+@ContentView(R.layout.booking)
+public class BookingActivity extends TrackedGuiceActivity implements ActivityCallbacks {
 
     public static final String ROOM_NUMBER_EXTRA = "room_number_extra";
     public static final String BOOKING_TIME_EXTRA = "booking_time_extra";
-    private Room roomNumber;
+    public static final String COMPANY_NAME_EXTRA = "COMPANY_NAME_EXTRA";
+
+    @InjectExtra(BOOKING_TIME_EXTRA)
     private BookingTime bookingTime;
+
+    @InjectExtra(ROOM_NUMBER_EXTRA)
+    private Room roomNumber;
+
+    @InjectExtra(COMPANY_NAME_EXTRA)
+    private String companyName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.booking);
 
-        roomNumber = (Room) getIntent().getSerializableExtra(ROOM_NUMBER_EXTRA);
-        bookingTime = (BookingTime) getIntent().getSerializableExtra(BOOKING_TIME_EXTRA);
-
-        new BookAsyncTask(this, this, roomNumber, bookingTime).execute();
+        new BookAsyncTask(this, this, roomNumber, bookingTime, companyName).execute();
     }
 
     @Override
     public void onTaskSuccess() {
-        ((TextView) findViewById(R.id.booking_view)).setText("Booked room " + roomNumber+ "!");
+        ((TextView) findViewById(R.id.booking_view)).setText(companyName + " booked " + roomNumber.displayName + " for " + bookingTime.displayName);
     }
 
     @Override
