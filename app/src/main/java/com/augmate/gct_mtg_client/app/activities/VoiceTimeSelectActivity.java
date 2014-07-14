@@ -2,19 +2,25 @@ package com.augmate.gct_mtg_client.app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.widget.Toast;
+import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.BookingTime;
 import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.tasks.CheckRoomAvailabilityTask;
 import com.augmate.gct_mtg_client.app.tasks.VoiceTimeSelectActivityCallbacks;
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
+import com.segment.android.Analytics;
+import com.segment.android.models.Props;
+import roboguice.inject.ContentView;
 import roboguice.inject.InjectExtra;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@ContentView(R.layout.loading_room_availabilities)
 public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements VoiceTimeSelectActivityCallbacks {
 
     public static final String ROOM_NAME_EXTRA = "ROOM_NAME_EXTRA";
@@ -28,16 +34,30 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
     String companyName;
 
     private List<BookingTime> availabilities;
+    private long fetchRoomAvailabilityStart;
+    private long voiceTimeSelectionStart;
+    private long voiceTimeRawInputStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fetchRoomAvailabilityStart = SystemClock.uptimeMillis();
 
         new CheckRoomAvailabilityTask(this, this, requestedRoom).execute();
     }
 
     @Override
     public void onRecieveAvailabilities(List<BookingTime> availabilities) {
+
+        if(this.availabilities == null) {
+            Analytics.track("GCT - Fetch Room Availability", new Props(
+                    "value", SystemClock.uptimeMillis() - fetchRoomAvailabilityStart
+            ));
+
+            // first time after fetching available rooms, we start tracking the overall voice process
+            voiceTimeSelectionStart = SystemClock.uptimeMillis();
+        }
+
         //TODO: Fix this cache
         this.availabilities = availabilities;
 
@@ -50,12 +70,19 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, roomPrompt);
 
         Log.d(TAG, "Requesting time select via speech-recognition..");
+
+        // we track a new voice input step every time
+        voiceTimeRawInputStart = SystemClock.uptimeMillis();
         startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        Analytics.track("GCT - Voice Raw Result Time", new Props(
+                "value", SystemClock.uptimeMillis() - voiceTimeRawInputStart
+        ));
 
         if(resultCode == RESULT_OK) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -69,6 +96,11 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
             if(bookingTime != BookingTime.NONE) {
 
+                // we have selected a real time
+                Analytics.track("GCT - Voice Selection Completed", new Props(
+                        "value", SystemClock.uptimeMillis() - voiceTimeSelectionStart
+                ));
+
                 Intent intent = new Intent(this, BookingActivity.class);
                 intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom);
                 intent.putExtra(BookingActivity.BOOKING_TIME_EXTRA, bookingTime);
@@ -77,6 +109,8 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
                 startActivity(intent);
                 return;
             }
+        }else{
+            Log.e(TAG, "Voice recognition failed with result code = " + resultCode);
         }
 
         // user said None, or whatever they said wasn't recognized
