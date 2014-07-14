@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
+import android.widget.Toast;
 import com.augmate.gct_mtg_client.app.BookingTime;
 import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.tasks.CheckRoomAvailabilityTask;
@@ -26,11 +27,30 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
     @InjectExtra(COMPANY_NAME_EXTRA)
     String companyName;
 
+    private List<BookingTime> availabilities;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         new CheckRoomAvailabilityTask(this, this, requestedRoom).execute();
+    }
+
+    @Override
+    public void onRecieveAvailabilities(List<BookingTime> availabilities) {
+        //TODO: Fix this cache
+        this.availabilities = availabilities;
+
+        String availableTimesString = Joiner.on(", ").join(availabilities);
+
+        String roomPrompt = String.format("Room %s is available. Book now? or " + availableTimesString, requestedRoom);
+
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, roomPrompt);
+
+        Log.d(TAG, "Requesting time select via speech-recognition..");
+        startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
     }
 
     @Override
@@ -46,7 +66,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             BookingTime bookingTime = VoiceTimeDisambiguator.match(voiceString, BookingTime.asStringList());
 
             Log.d(TAG, "Booking time recognized as: " + bookingTime);
-            
+
             if(bookingTime != BookingTime.NONE) {
 
                 Intent intent = new Intent(this, BookingActivity.class);
@@ -61,20 +81,8 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
         // user said None, or whatever they said wasn't recognized
         Log.d(TAG, "Voice finished without positive user response (yes, etc)");
-    }
 
-    @Override
-    public void onTaskSuccess(List<BookingTime> availabilities) {
-
-        String availableTimesString = Joiner.on(", ").join(availabilities);
-
-        String roomPrompt = String.format("Room %s is available. Book now? or " + availableTimesString, requestedRoom);
-
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, roomPrompt);
-
-        Log.d(TAG, "Requesting time select via speech-recognition..");
-        startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
+        onRecieveAvailabilities(availabilities);
+        Toast.makeText(this, "Time not recognized, try again", Toast.LENGTH_LONG).show();
     }
 }

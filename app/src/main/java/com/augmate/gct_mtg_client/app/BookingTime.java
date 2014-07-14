@@ -48,10 +48,8 @@ public enum BookingTime {
         map.put(TIME_2PM, newArrayList("2", "2 pm", "14", "two", "too", "to"));
         map.put(TIME_3PM, newArrayList("3", "3 pm", "15", "three"));
         map.put(TIME_4PM, newArrayList("4", "4 pm", "16", "four", "for"));
-        map.put(TIME_5PM, newArrayList("5", "5 pm", "17", "five"));
+        map.put(TIME_5PM, newArrayList("5", "5 pm", "17", "five", "spy cam"));
         map.put(TIME_6PM, newArrayList("6", "6 pm", "18", "six"));
-
-
 
         return map;
     }

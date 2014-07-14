@@ -39,7 +39,7 @@ public class CheckRoomAvailabilityTask extends SafeAsyncTask<List<BookingTime>> 
     protected void onSuccess(List<BookingTime> availabilities) throws Exception {
         super.onSuccess(availabilities);
 
-        callbacks.onTaskSuccess(availabilities);
+        callbacks.onRecieveAvailabilities(availabilities);
     }
 
     private Calendar buildCalendarService(Credential credential) {
