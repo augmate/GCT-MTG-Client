@@ -38,7 +38,7 @@
         <activity android:name=".app.activities.MainActivity"/>
         <activity android:name=".app.activities.BookingActivity"/>
         <activity android:name=".app.activities.VoiceTimeSelectActivity"/>
-        <activity android:name=".app.activities.WalkingActivity"/>
+        <activity android:name=".app.activities.RoomSelectionActivity"/>
         <activity android:name=".app.activities.DeviceAuthInfoActivity"/>
         <activity android:name=".app.activities.BeaconActivity"/>
         
