@@ -49,7 +49,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
     @Override
     public void onRecieveAvailabilities(List<BookingTime> availabilities) {
 
-        if(this.availabilities == null) {
+        if (this.availabilities == null) {
             Analytics.track("GCT - Fetch Room Availability", new Props(
                     "value", SystemClock.uptimeMillis() - fetchRoomAvailabilityStart
             ));
@@ -84,7 +84,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
                 "value", SystemClock.uptimeMillis() - voiceTimeRawInputStart
         ));
 
-        if(resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             Log.d(TAG, "Got " + results.size() + " results from Speech API");
 
@@ -94,29 +94,38 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
             Log.d(TAG, "Booking time recognized as: " + bookingTime);
 
-            if(bookingTime != BookingTime.NONE) {
 
-                // we have selected a real time
-                Analytics.track("GCT - Voice Selection Completed", new Props(
-                        "value", SystemClock.uptimeMillis() - voiceTimeSelectionStart
-                ));
+            if (bookingTime != BookingTime.NONE) {
 
-                Intent intent = new Intent(this, BookingActivity.class);
-                intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom);
-                intent.putExtra(BookingActivity.BOOKING_TIME_EXTRA, bookingTime);
-                intent.putExtra(BookingActivity.COMPANY_NAME_EXTRA, companyName);
+                if (availabilities.contains(bookingTime)) {
+                    // we have selected a real time
+                    Analytics.track("GCT - Voice Selection Completed", new Props(
+                            "value", SystemClock.uptimeMillis() - voiceTimeSelectionStart
+                    ));
 
-                startActivity(intent);
-                return;
+                    Intent intent = new Intent(this, BookingActivity.class);
+                    intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom.displayName);
+                    intent.putExtra(BookingActivity.BOOKING_TIME_EXTRA, bookingTime);
+                    intent.putExtra(BookingActivity.COMPANY_NAME_EXTRA, companyName);
+
+                    startActivity(intent);
+                    finish();
+                    return;
+                } else {
+                    // requested booking time isn't available. restart.
+                    Toast.makeText(this, "Timeslot is unavailable", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                // speech-api recognized something that isn't a timeslot. restart.
+                Toast.makeText(this, "Time not recognized, try again", Toast.LENGTH_LONG).show();
             }
-        }else{
+        } else {
+            // speech-api didn't recognize anything. restart
             Log.e(TAG, "Voice recognition failed with result code = " + resultCode);
         }
 
         // user said None, or whatever they said wasn't recognized
         Log.d(TAG, "Voice finished without positive user response (yes, etc)");
-
         onRecieveAvailabilities(availabilities);
-        Toast.makeText(this, "Time not recognized, try again", Toast.LENGTH_LONG).show();
     }
 }
