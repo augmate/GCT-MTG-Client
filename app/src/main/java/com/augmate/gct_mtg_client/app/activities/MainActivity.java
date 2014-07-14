@@ -86,7 +86,7 @@ public class MainActivity extends TrackedActivity {
 
     public void onPause(){
         super.onPause();
-        //super.onDestroy();
+        super.onDestroy();
     }
 
     private void startBooking(List<RoomOption> roomOptions) {

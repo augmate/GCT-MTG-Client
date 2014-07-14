@@ -80,6 +80,6 @@ public class RoomSelectionActivity extends TrackedGuiceActivity {
 
     public void onPause(){
         super.onPause();
-        //super.onDestroy();
+        super.onDestroy();
     }
 }
