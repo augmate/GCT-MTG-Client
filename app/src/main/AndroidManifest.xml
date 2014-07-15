@@ -53,5 +53,11 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".app.OnHeadStateReceiver">
+            <intent-filter>
+                <action android:name="com.google.android.glass.action.ON_HEAD_STATE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 </manifest>

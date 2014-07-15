@@ -27,15 +27,19 @@ public class WelcomeActivity extends TrackedGuiceActivity {
     @InjectView(R.id.wifi_missing)
     TextView wifiMissingView;
 
-    private long mLoginStartTime;
+    private long mLoginStartTime = 0;
 
     @Inject
     ConnectivityManager connectivityManager;
+
+    public static WelcomeActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        instance = this;
 
         Log.d(TAG, "onCreate");
 
@@ -83,8 +87,19 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         }
     }
 
-    public void onPause(){
+    @Override
+    protected void onPause() {
         super.onPause();
-        super.onDestroy();
+    }
+
+    /**
+     * Should be called before shutting down the application to capture sesion duration
+     * and possibly flush out any pending logs
+     */
+    public void onBeforeShutdown() {
+        if(mLoginStartTime != 0)
+            Analytics.track("GCT Session Duration", new Props(
+                    "value", SystemClock.uptimeMillis() - mLoginStartTime
+            ));
     }
 }

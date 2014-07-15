@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.BookingTime;
+import com.augmate.gct_mtg_client.app.OnHeadStateReceiver;
 import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.tasks.CheckRoomAvailabilityTask;
 import com.augmate.gct_mtg_client.app.tasks.VoiceTimeSelectActivityCallbacks;
@@ -91,6 +92,14 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
         Analytics.track("GCT - Voice Raw Result Time", new Props(
                 "value", SystemClock.uptimeMillis() - voiceTimeRawInputStart
         ));
+        /*
+        if (!OnHeadStateReceiver.IsOnHead) {
+            Log.d(TAG, "Voice Activity Paused, Ending voice recognition loop.");
+            //finish();
+            return;
+        }
+        */
+        Log.d(TAG, "resultCode = " + resultCode);
 
         if (resultCode == RESULT_OK) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -119,21 +128,32 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
                     startActivity(intent);
                     finish();
                     return;
+
                 } else {
                     // requested booking time isn't available. restart.
                     Toast.makeText(this, "Timeslot is unavailable", Toast.LENGTH_LONG).show();
+                    onRecieveAvailabilities(availabilities);
                 }
             } else {
                 // speech-api recognized something that isn't a timeslot. restart.
                 Toast.makeText(this, "Time not recognized, try again", Toast.LENGTH_LONG).show();
+                onRecieveAvailabilities(availabilities);
             }
-        } else {
+        }if (resultCode == RESULT_CANCELED){return;}
+        else {
             // speech-api didn't recognize anything. restart
             Log.e(TAG, "Voice recognition failed with result code = " + resultCode);
-        }
 
-        // user said None, or whatever they said wasn't recognized
-        Log.d(TAG, "Voice finished without positive user response (yes, etc)");
-        onRecieveAvailabilities(availabilities);
+
+            // user said None, or whatever they said wasn't recognized
+            Log.d(TAG, "Voice finished without positive user response (yes, etc)");
+            onRecieveAvailabilities(availabilities);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Activity being destroyed");
     }
 }
