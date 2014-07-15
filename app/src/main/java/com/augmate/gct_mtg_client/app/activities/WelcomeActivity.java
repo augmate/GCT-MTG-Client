@@ -1,6 +1,8 @@
 package com.augmate.gct_mtg_client.app.activities;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import com.augmate.gct_mtg_client.R;
+import com.augmate.gct_mtg_client.app.OnHeadStateReceiver;
 import com.google.inject.Inject;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -87,9 +90,29 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
+    public void onResume()
+    {
+        ComponentName component=new ComponentName(this, OnHeadStateReceiver.class);
+        getPackageManager()
+                .setComponentEnabledSetting(component,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
+        super.onResume();
+    }
+
+    public void onPause()
+    {
+        ComponentName component=new ComponentName(this, OnHeadStateReceiver.class);
+        getPackageManager()
+                .setComponentEnabledSetting(component,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP);
         super.onPause();
+    }
+
+    public void onNewIntent(Intent intent){
+        if(intent.getBooleanExtra("Close", false))
+            finish();
     }
 
     /**
