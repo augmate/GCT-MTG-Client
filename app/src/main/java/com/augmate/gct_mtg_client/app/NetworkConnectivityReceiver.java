@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+import com.segment.android.Analytics;
 
 public class NetworkConnectivityReceiver extends BroadcastReceiver {
 
@@ -27,5 +28,7 @@ public class NetworkConnectivityReceiver extends BroadcastReceiver {
         Log.i(TAG, "Type name: " + networkInfo.getTypeName());
         Log.i(TAG, "Extra info: " + networkInfo.getExtraInfo());
         Log.i(TAG, "=======================================");
+
+        Analytics.track("GCT - Network State " + networkInfo.getState());
     }
 }
