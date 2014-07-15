@@ -18,7 +18,6 @@ public class NetworkConnectivityReceiver extends BroadcastReceiver {
                 intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 
         Log.i(TAG, "=======================================");
-        Log.i(TAG, "Reason: " + networkInfo.getReason());
         Log.i(TAG, "State: " + networkInfo.getState());
         Log.i(TAG, "Detailed State: " + networkInfo.getDetailedState());
         Log.i(TAG, "Is Connected?: " + networkInfo.isConnected());

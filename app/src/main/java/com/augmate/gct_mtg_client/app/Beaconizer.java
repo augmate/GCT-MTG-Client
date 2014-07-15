@@ -3,6 +3,7 @@ package com.augmate.gct_mtg_client.app;
 import android.content.Context;
 import android.os.RemoteException;
 import android.util.Log;
+import com.augmate.gct_mtg_client.app.tasks.IReceiveRoomsCallbacks;
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
@@ -20,7 +21,7 @@ public class Beaconizer {
     private BeaconManager beaconManager;
     boolean isRunning = false;
 
-    public Beaconizer(Context context, final IReceiveRooms receiver) {
+    public Beaconizer(Context context, final IReceiveRoomsCallbacks receiver) {
         Log.d(TAG, "Beacon Service is ready. Starting ranging scan.");
 
         beaconManager = new BeaconManager(context);
