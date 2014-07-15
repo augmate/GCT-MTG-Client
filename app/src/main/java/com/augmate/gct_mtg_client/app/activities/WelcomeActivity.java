@@ -42,8 +42,7 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
         if(!networkInfo.isConnected()){
-            Log.d(TAG, "Wifi is not turned on, stopping");
-
+            Log.d(TAG, "Wifi is not turned on, preventing user from progressing");
             wifiMissingView.setVisibility(View.VISIBLE);
         }else if(savedInstanceState == null) {
             Log.d(TAG, "Skipping scanner, recreated activity instance");

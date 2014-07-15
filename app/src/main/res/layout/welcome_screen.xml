@@ -13,7 +13,7 @@
         android:gravity="center_horizontal"
         android:text="@string/connect_to_wifi"
         android:textSize="36sp"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/scan_code_prompt"
