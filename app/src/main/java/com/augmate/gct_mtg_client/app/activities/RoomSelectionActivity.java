@@ -16,7 +16,7 @@ import roboguice.inject.InjectExtra;
 import roboguice.inject.InjectResource;
 import roboguice.inject.InjectView;
 
-@ContentView(R.layout.walking_instructions)
+@ContentView(R.layout.room_selection)
 public class RoomSelectionActivity extends TrackedGuiceActivity {
     public static final String COMPANY_NAME_EXTRA = "COMPANY_NAME_EXTRA";
     public static final String TAG = "WalkingActivity";

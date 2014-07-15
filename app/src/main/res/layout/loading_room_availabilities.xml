@@ -8,9 +8,10 @@
               android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:text="@string/loading_room_availabilities"
+        android:gravity="center"
         android:textSize="36sp"/>
 
 </LinearLayout>
