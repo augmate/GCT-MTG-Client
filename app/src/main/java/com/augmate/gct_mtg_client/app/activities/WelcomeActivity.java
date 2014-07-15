@@ -53,14 +53,7 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             wifiMissingView.setVisibility(View.VISIBLE);
         }else if(savedInstanceState == null) {
             Log.d(TAG, "Skipping scanner, recreated activity instance");
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mLoginStartTime = SystemClock.uptimeMillis();
-                    Log.d(TAG, "Starting a new scanner");
-                    new IntentIntegrator(WelcomeActivity.this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
-                }
-            }, 1000);
+            launchScanner(1000);
         }
     }
 
@@ -83,10 +76,12 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             finish();
 
             Log.d(TAG, "Scan completed successfully & activity finished");
-        }else{
+        }
+        else if(resultCode == RESULT_CANCELED) {
             Analytics.track("GCT Login Scan Time Unsuccessful", new Props(
                     "value", SystemClock.uptimeMillis() - mLoginStartTime
             ));
+            launchScanner(1000);
         }
     }
 
@@ -115,14 +110,14 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             finish();
     }
 
-    /**
-     * Should be called before shutting down the application to capture sesion duration
-     * and possibly flush out any pending logs
-     */
-    public void onBeforeShutdown() {
-        if(mLoginStartTime != 0)
-            Analytics.track("GCT Session Duration", new Props(
-                    "value", SystemClock.uptimeMillis() - mLoginStartTime
-            ));
+    private void launchScanner(long delay){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mLoginStartTime = SystemClock.uptimeMillis();
+                Log.d(TAG, "Starting a new scanner");
+                new IntentIntegrator(WelcomeActivity.this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
+            }
+        }, delay);
     }
 }

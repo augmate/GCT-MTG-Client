@@ -65,7 +65,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
         //TODO: Fix this cache
         this.availabilities = availabilities;
 
-        if(!availabilities.isEmpty()) {
+        if (!availabilities.isEmpty()) {
             String availableTimesString = Joiner.on(", ").join(availabilities);
 
             String roomPrompt = String.format("Room %s is available. Book now? or %s", requestedRoom.displayName, availableTimesString);
@@ -79,7 +79,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             // we track a new voice input step every time
             voiceTimeRawInputStart = SystemClock.uptimeMillis();
             startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
-        }else{
+        } else {
             Toast.makeText(this, "Cannot fetch room availability", Toast.LENGTH_LONG);
             finish();
         }
@@ -139,8 +139,13 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
                 Toast.makeText(this, "Time not recognized, try again", Toast.LENGTH_LONG).show();
                 onRecieveAvailabilities(availabilities);
             }
-        }if (resultCode == RESULT_CANCELED){return;}
-        else {
+        }
+        if (resultCode == RESULT_CANCELED) {
+            Intent i = new Intent(this, RoomSelectionActivity.class);
+            i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
+            startActivity(i);
+            finish();
+        } else {
             // speech-api didn't recognize anything. restart
             Log.e(TAG, "Voice recognition failed with result code = " + resultCode);
 

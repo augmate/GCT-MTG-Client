@@ -36,15 +36,8 @@ public class RoomSelectionActivity extends TrackedGuiceActivity {
         String walkingInstructions = String.format(walkingInstructionsTemplate, companyName);
         walkingInstructionsView.setText(walkingInstructions);
 
-        if (savedInstanceState == null) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    IntentIntegrator scanner = new IntentIntegrator(RoomSelectionActivity.this);
-                    scanner.initiateScan();
-                }
-            }, 3000);
-        }
+        if (savedInstanceState == null)
+            launchScanner(3000);
     }
 
 
@@ -74,10 +67,21 @@ public class RoomSelectionActivity extends TrackedGuiceActivity {
                 scanner.initiateScan();
             }
 
+        } else if (resultCode == RESULT_CANCELED) {
+            launchScanner(3000);
         } else {
             Log.d(TAG, "Match not found for any result");
             Toast.makeText(this, "Room not found", Toast.LENGTH_LONG).show();
         }
+    }
 
+    private void launchScanner(long delay) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                IntentIntegrator scanner = new IntentIntegrator(RoomSelectionActivity.this);
+                scanner.initiateScan();
+            }
+        }, delay);
     }
 }
