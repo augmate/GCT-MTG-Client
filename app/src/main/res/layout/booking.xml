@@ -11,6 +11,7 @@
         android:id="@+id/booking_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/booking_in_progress"
         android:textSize="36sp"/>
 
