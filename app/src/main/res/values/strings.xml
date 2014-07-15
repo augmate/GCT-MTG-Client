@@ -10,5 +10,6 @@
     <string name="scan_code_prompt">Scan the QR code for your company</string>
     <string name="walking_instructions">%s, walk to the room you\'d like to check out and scan the room code</string>
     <string name="loading_room_availabilities">Loading room availabilities...</string>
+    <string name="connect_to_wifi">Please connect to Wi-Fi</string>
 
 </resources>
