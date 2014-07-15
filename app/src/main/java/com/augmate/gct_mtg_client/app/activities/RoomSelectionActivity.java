@@ -19,7 +19,7 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.room_selection)
 public class RoomSelectionActivity extends TrackedGuiceActivity {
     public static final String COMPANY_NAME_EXTRA = "COMPANY_NAME_EXTRA";
-    public static final String TAG = "WalkingActivity";
+    public static final String TAG = "RoomSelectionActivity";
 
     @InjectView(R.id.walking_instructions)
     TextView walkingInstructionsView;

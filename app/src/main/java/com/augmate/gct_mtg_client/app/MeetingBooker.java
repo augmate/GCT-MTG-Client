@@ -15,8 +15,8 @@ import static com.google.common.collect.Lists.newArrayList;
 public class MeetingBooker {
 
     public static final String TAG = "MeetingBooker";
-    public static final int LAST_BOOKABLE_SLOT = 18;
-    private static Map<Room,String> CALENDAR_IDS = new HashMap<Room,String>();
+    public static final int LAST_BOOKABLE_SLOT = 22;
+    private static Map<Room, String> CALENDAR_IDS = new HashMap<Room, String>();
 
     static {
         CALENDAR_IDS.put(Room.ROOM_1, "augmate.com_3r68n4o9i492n2ls5o43po776s@group.calendar.google.com");
@@ -34,16 +34,16 @@ public class MeetingBooker {
     }
 
     public boolean bookNow(Room roomNumber, BookingTime bookingTime, String companyName) {
-        
-        if(bookingTime == BookingTime.NONE) {
+
+        if (bookingTime == BookingTime.NONE) {
             Log.d(TAG, "Booking time is None. Not booking.");
             return false;
         }
-        
+
         // either book now or for a specific hour
         DateTime bookingStartTime = getCurrentHour();
-        
-        if(bookingTime != BookingTime.NOW) {
+
+        if (bookingTime != BookingTime.NOW) {
             bookingStartTime = bookingStartTime.withHourOfDay(bookingTime.hour);
         }
 
@@ -58,11 +58,11 @@ public class MeetingBooker {
         boolean roomBooked = true;
 
         Log.d(TAG, String.format("Attempting to book room '%s' at %s for %s", roomNumber, event.getStart(), companyName));
-        
+
         try {
             calendarService.events().insert(CALENDAR_IDS.get(roomNumber), event).execute();
             Log.d(TAG, String.format("Meeting room '%s' booked for %s", roomNumber, event.getStart()));
-        } catch(com.google.api.client.googleapis.json.GoogleJsonResponseException e) {
+        } catch (com.google.api.client.googleapis.json.GoogleJsonResponseException e) {
             Log.e(TAG, "Google Calendar problem", e);
         } catch (Exception e) {
             Log.e(TAG, "Failed to insert event into google calendar", e);
@@ -82,7 +82,7 @@ public class MeetingBooker {
         return new EventDateTime().setDateTime(new com.google.api.client.util.DateTime(jodaTime.toDate()));
     }
 
-    private com.google.api.client.util.DateTime toCalenderTime(DateTime jodaTime){
+    private com.google.api.client.util.DateTime toCalenderTime(DateTime jodaTime) {
         return new com.google.api.client.util.DateTime(jodaTime.toDate());
     }
 
@@ -117,25 +117,29 @@ public class MeetingBooker {
             // from current hour until the hour we would want to book
             //   check if hour is inside one of the busy periods
             //     if it isn't, add it to the available hours list
-            for(int hourSlot = getCurrentHour().getHourOfDay(); hourSlot <= LAST_BOOKABLE_SLOT; hourSlot ++) {
+            int currentHour = getCurrentHour().getHourOfDay();
+
+            for (int hourSlot = currentHour; hourSlot <= LAST_BOOKABLE_SLOT; hourSlot++) {
                 DateTime timeSlot = new DateTime().withHourOfDay(hourSlot).withMinuteOfHour(30);
 
                 Boolean isBusy = false;
 
-                for(TimePeriod busyPeriod : busyTimes) {
+                for (TimePeriod busyPeriod : busyTimes) {
                     DateTime busyStart = new DateTime(busyPeriod.getStart().getValue());
                     DateTime busyEnd = new DateTime(busyPeriod.getEnd().getValue());
 
-                    if(timeSlot.isAfter(busyStart) && timeSlot.isBefore(busyEnd)) {
+                    if (timeSlot.isAfter(busyStart) && timeSlot.isBefore(busyEnd)) {
                         Log.d(TAG, "Room is busy at " + hourSlot);
                         isBusy = true;
                         break;
                     }
                 }
 
-                if(!isBusy)
-                    availableSlots.add(BookingTime.fromHour(hourSlot));
+                if (!isBusy)
+                    availableSlots.add(BookingTime.fromHour(hourSlot, currentHour));
+
             }
+
 
         } catch (IOException e) {
             Log.e(TAG, "Could not get availability of room " + requestedRoom.displayName, e);

@@ -9,7 +9,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.BookingTime;
-import com.augmate.gct_mtg_client.app.OnHeadStateReceiver;
 import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.tasks.CheckRoomAvailabilityTask;
 import com.augmate.gct_mtg_client.app.tasks.VoiceTimeSelectActivityCallbacks;
@@ -68,7 +67,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
         if (!availabilities.isEmpty()) {
             String availableTimesString = Joiner.on(", ").join(availabilities);
 
-            String roomPrompt = String.format("Room %s is available. Book now? or %s", requestedRoom.displayName, availableTimesString);
+            String roomPrompt = String.format("Room %s is available. \nBook %s", requestedRoom.displayName, availableTimesString);
 
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -136,7 +135,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
                 }
             } else {
                 // speech-api recognized something that isn't a timeslot. restart.
-                Toast.makeText(this, "Time not recognized, try again", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Time not recognized, try again", Toast.LENGTH_SHORT).show();
                 onRecieveAvailabilities(availabilities);
             }
         }
