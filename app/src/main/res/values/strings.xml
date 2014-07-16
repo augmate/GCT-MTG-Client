@@ -11,5 +11,6 @@
     <string name="walking_instructions">%s, walk to the room you\'d like to check out and scan the room code</string>
     <string name="loading_room_availabilities">Loading room availabilities...</string>
     <string name="connect_to_wifi">Please connect to Wi-Fi</string>
+    <string name="no_times_available">Sorry, there are no times left for this room. Please try another.</string>
 
 </resources>

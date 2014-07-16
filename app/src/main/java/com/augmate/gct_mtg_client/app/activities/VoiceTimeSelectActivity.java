@@ -79,7 +79,11 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             voiceTimeRawInputStart = SystemClock.uptimeMillis();
             startActivityForResult(intent, VOICE_RECOGNIZER_REQUEST_CODE);
         } else {
-            Toast.makeText(this, "Cannot fetch room availability", Toast.LENGTH_LONG);
+            Log.debug("No times left for this room");
+            Toast.makeText(this, "No times left for this room", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(this, RoomSelectionActivity.class);
+            i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
+            startActivity(i);
             finish();
         }
     }
