@@ -31,6 +31,6 @@ public class VoiceTimeDisambiguator {
             }
         }
 
-        return BookingTime.NONE;
+        return BookingTime.INVALID;
     }
 }

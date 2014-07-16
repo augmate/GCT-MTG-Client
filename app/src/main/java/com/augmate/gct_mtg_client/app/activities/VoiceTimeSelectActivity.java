@@ -67,7 +67,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
         if (!availabilities.isEmpty()) {
             String availableTimesString = Joiner.on(", ").join(availabilities);
 
-            String roomPrompt = String.format("Room %s is available. \nBook %s", requestedRoom.displayName, availableTimesString);
+            String roomPrompt = String.format("%s is available for:\n\n%s\n\n(say 'none' to go back)", requestedRoom.displayName, availableTimesString);
 
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -109,11 +109,15 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             BookingTime bookingTime = VoiceTimeDisambiguator.match(voiceString, BookingTime.asStringList());
 
             Log.d(TAG, "Booking time recognized as: " + bookingTime);
-
-
-            if (bookingTime != BookingTime.NONE) {
-
-                if (availabilities.contains(bookingTime)) {
+            if (bookingTime != BookingTime.INVALID) {
+                if(bookingTime == BookingTime.NONE) {
+                    Log.d(TAG, "NONE recognized, going back to room selection");
+                    Intent i = new Intent(this, RoomSelectionActivity.class);
+                    i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
+                    startActivity(i);
+                    finish();
+                    return;
+                }else if (availabilities.contains(bookingTime)) {
                     // we have selected a real time
                     Analytics.track("GCT - Voice Selection Completed", new Props(
                             "value", SystemClock.uptimeMillis() - voiceTimeSelectionStart
@@ -139,7 +143,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
                 onRecieveAvailabilities(availabilities);
             }
         }
-        if (resultCode == RESULT_CANCELED) {
+        else if (resultCode == RESULT_CANCELED) {
             Intent i = new Intent(this, RoomSelectionActivity.class);
             i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
             startActivity(i);

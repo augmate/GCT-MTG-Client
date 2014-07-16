@@ -26,7 +26,8 @@ public enum BookingTime {
     TIME_10PM("10pm", 22),
     TIME_11PM("11pm", 23),
     NOW("now", 0),
-    NONE("none", -1);
+    NONE("none",-1),
+    INVALID("invalid", -2);
     public static final String TAG = "BookingTime";
 
     public final String displayName;
@@ -46,6 +47,8 @@ public enum BookingTime {
         Map<BookingTime, List<String>> map = new HashMap<BookingTime, List<String>>();
 
         map.put(NOW, newArrayList("now", "book now"));
+        map.put(NONE, newArrayList("none"));
+        map.put(INVALID, newArrayList("invalid"));
         map.put(TIME_9AM, newArrayList("9", "9 am", "book 9 am", "nine"));
         map.put(TIME_10AM, newArrayList("10", "10 am", "book 10 am", "ten"));
         map.put(TIME_11AM, newArrayList("11", "11 am" , "book 11 am",  "eleven"));
@@ -78,6 +81,6 @@ public enum BookingTime {
         }
 
         Log.d(TAG, "Could not map hour " + hour + " into BookingTime");
-        return BookingTime.NONE;
+        return BookingTime.INVALID;
     }
 }

@@ -68,7 +68,8 @@ public class RoomSelectionActivity extends TrackedGuiceActivity {
             }
 
         } else if (resultCode == RESULT_CANCELED) {
-            launchScanner(3000);
+            //launchScanner(3000);
+            finish();
         } else {
             Log.d(TAG, "Match not found for any result");
             Toast.makeText(this, "Room not found", Toast.LENGTH_LONG).show();

@@ -81,7 +81,8 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             Analytics.track("GCT Login Scan Time Unsuccessful", new Props(
                     "value", SystemClock.uptimeMillis() - mLoginStartTime
             ));
-            launchScanner(1000);
+            //launchScanner(1000);
+            finish();
         }
     }
 
