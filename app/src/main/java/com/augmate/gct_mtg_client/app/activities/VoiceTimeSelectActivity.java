@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.speech.RecognizerIntent;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.BookingTime;
+import com.augmate.gct_mtg_client.app.Log;
 import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.tasks.CheckRoomAvailabilityTask;
 import com.augmate.gct_mtg_client.app.tasks.VoiceTimeSelectActivityCallbacks;
@@ -73,7 +73,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT, roomPrompt);
 
-            Log.d(TAG, "Requesting time select via speech-recognition..");
+            Log.debug("Requesting time select via speech-recognition..");
 
             // we track a new voice input step every time
             voiceTimeRawInputStart = SystemClock.uptimeMillis();
@@ -93,25 +93,25 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
         ));
         /*
         if (!OnHeadStateReceiver.IsOnHead) {
-            Log.d(TAG, "Voice Activity Paused, Ending voice recognition loop.");
+            Log.debug( "Voice Activity Paused, Ending voice recognition loop.");
             //finish();
             return;
         }
         */
-        Log.d(TAG, "resultCode = " + resultCode);
+        Log.debug( "resultCode = " + resultCode);
 
         if (resultCode == RESULT_OK) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            Log.d(TAG, "Got " + results.size() + " results from Speech API");
+            Log.debug( "Got " + results.size() + " results from Speech API");
 
             String voiceString = results.get(0);
 
             BookingTime bookingTime = VoiceTimeDisambiguator.match(voiceString, BookingTime.asStringList());
 
-            Log.d(TAG, "Booking time recognized as: " + bookingTime);
+            Log.debug( "Booking time recognized as: " + bookingTime);
             if (bookingTime != BookingTime.INVALID) {
                 if(bookingTime == BookingTime.NONE) {
-                    Log.d(TAG, "NONE recognized, going back to room selection");
+                    Log.debug( "NONE recognized, going back to room selection");
                     Intent i = new Intent(this, RoomSelectionActivity.class);
                     i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
                     startActivity(i);
@@ -150,11 +150,11 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             finish();
         } else {
             // speech-api didn't recognize anything. restart
-            Log.e(TAG, "Voice recognition failed with result code = " + resultCode);
+            Log.error("Voice recognition failed with result code = " + resultCode);
 
 
             // user said None, or whatever they said wasn't recognized
-            Log.d(TAG, "Voice finished without positive user response (yes, etc)");
+            Log.debug( "Voice finished without positive user response (yes, etc)");
             onRecieveAvailabilities(availabilities);
         }
     }
@@ -162,6 +162,6 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "Activity being destroyed");
+        Log.debug( "Activity being destroyed");
     }
 }

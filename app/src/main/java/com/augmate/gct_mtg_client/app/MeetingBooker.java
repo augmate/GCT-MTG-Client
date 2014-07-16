@@ -1,6 +1,5 @@
 package com.augmate.gct_mtg_client.app;
 
-import android.util.Log;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
 import org.joda.time.DateTime;
@@ -36,7 +35,7 @@ public class MeetingBooker {
     public boolean bookNow(Room roomNumber, BookingTime bookingTime, String companyName) {
 
         if (bookingTime == BookingTime.NONE) {
-            Log.d(TAG, "Booking time is None. Not booking.");
+            Log.debug("Booking time is None. Not booking.");
             return false;
         }
 
@@ -57,15 +56,15 @@ public class MeetingBooker {
 
         boolean roomBooked = true;
 
-        Log.d(TAG, String.format("Attempting to book room '%s' at %s for %s", roomNumber, event.getStart(), companyName));
+        Log.debug(String.format("Attempting to book room '%s' at %s for %s", roomNumber, event.getStart(), companyName));
 
         try {
             calendarService.events().insert(CALENDAR_IDS.get(roomNumber), event).execute();
-            Log.d(TAG, String.format("Meeting room '%s' booked for %s", roomNumber, event.getStart()));
+            Log.debug(String.format("Meeting room '%s' booked for %s", roomNumber, event.getStart()));
         } catch (com.google.api.client.googleapis.json.GoogleJsonResponseException e) {
-            Log.e(TAG, "Google Calendar problem", e);
+            Log.error("Google Calendar problem", e);
         } catch (Exception e) {
-            Log.e(TAG, "Failed to insert event into google calendar", e);
+            Log.error("Failed to insert event into google calendar", e);
             e.printStackTrace();
             roomBooked = false;
         }
@@ -112,7 +111,7 @@ public class MeetingBooker {
             FreeBusyResponse freeBusyResponse = calendarService.freebusy().query(freeBusyRequest).execute();
 
             List<TimePeriod> busyTimes = freeBusyResponse.getCalendars().get(CALENDAR_IDS.get(requestedRoom)).getBusy();
-            Log.d(TAG, "Found " + busyTimes.size() + " busy slots for " + requestedRoom.displayName);
+            Log.debug("Found " + busyTimes.size() + " busy slots for " + requestedRoom.displayName);
 
             // from current hour until the hour we would want to book
             //   check if hour is inside one of the busy periods
@@ -129,7 +128,7 @@ public class MeetingBooker {
                     DateTime busyEnd = new DateTime(busyPeriod.getEnd().getValue());
 
                     if (timeSlot.isAfter(busyStart) && timeSlot.isBefore(busyEnd)) {
-                        Log.d(TAG, "Room is busy at " + hourSlot);
+                        Log.debug("Room is busy at " + hourSlot);
                         isBusy = true;
                         break;
                     }
@@ -142,7 +141,7 @@ public class MeetingBooker {
 
 
         } catch (IOException e) {
-            Log.e(TAG, "Could not get availability of room " + requestedRoom.displayName, e);
+            Log.error("Could not get availability of room " + requestedRoom.displayName, e);
         }
 
         return availableSlots;

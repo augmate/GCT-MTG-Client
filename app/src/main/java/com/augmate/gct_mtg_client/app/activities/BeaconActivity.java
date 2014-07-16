@@ -1,11 +1,11 @@
 package com.augmate.gct_mtg_client.app.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.Beaconizer;
+import com.augmate.gct_mtg_client.app.Log;
 import com.augmate.gct_mtg_client.app.tasks.IReceiveRoomsCallbacks;
 import com.augmate.gct_mtg_client.app.RoomOption;
 import com.segment.android.TrackedActivity;
@@ -22,7 +22,7 @@ public class BeaconActivity extends TrackedActivity implements IReceiveRoomsCall
         setContentView(R.layout.activity_nearest_room);
 
         newBeaconManager = new Beaconizer(this, this);
-        Log.d("BeaconActivity::onCreate()", "BeaconManager configured.");
+        Log.debug("BeaconManager configured.");
     }
 
     public void onReceiveNearbyRooms(List<RoomOption> rooms) {

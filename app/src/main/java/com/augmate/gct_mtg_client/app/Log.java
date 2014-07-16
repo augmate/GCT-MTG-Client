@@ -21,12 +21,14 @@ public class Log {
 
         LogentriesAppender logentriesAppender = new LogentriesAppender();
         logentriesAppender.setToken("c3a45763-9854-43cc-838a-7a1b71418c6c");
-        logentriesAppender.setDebug(true);
+        logentriesAppender.setDebug(false);
         logentriesAppender.setLayout(pl);
         logentriesAppender.setSsl(false);
 
         Logger lgr = Logger.getRootLogger();
         lgr.addAppender(logentriesAppender);
+        
+        // TODO: add a local appender
 
         lgr.debug("Started logging on " + Build.MANUFACTURER + " " + Build.MODEL + " version=" + Build.ID);
 
@@ -54,5 +56,21 @@ public class Log {
     
     public static void debug(String msg) {
         getLogger(null).debug(msg);
+    }
+
+    public static void debug(String msg, Exception err) {
+        getLogger(null).debug(msg, err);
+    }
+
+    public static void error(String msg) {
+        getLogger(null).error(msg);
+    }
+    
+    public static void error(String msg, Exception err) {
+        getLogger(null).error(msg, err);
+    }
+
+    public static void info(String msg) {
+        getLogger(null).info(msg);
     }
 }

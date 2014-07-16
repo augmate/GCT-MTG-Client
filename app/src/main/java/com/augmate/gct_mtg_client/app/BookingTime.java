@@ -1,7 +1,5 @@
 package com.augmate.gct_mtg_client.app;
 
-import android.util.Log;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +78,7 @@ public enum BookingTime {
             }
         }
 
-        Log.d(TAG, "Could not map hour " + hour + " into BookingTime");
+        Log.debug("Could not map hour " + hour + " into BookingTime");
         return BookingTime.INVALID;
     }
 }

@@ -2,7 +2,6 @@ package com.augmate.gct_mtg_client.app;
 
 import android.content.Context;
 import android.os.RemoteException;
-import android.util.Log;
 import com.augmate.gct_mtg_client.app.tasks.IReceiveRoomsCallbacks;
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
@@ -22,16 +21,16 @@ public class Beaconizer {
     boolean isRunning = false;
 
     public Beaconizer(Context context, final IReceiveRoomsCallbacks receiver) {
-        Log.d(TAG, "Beacon Service is ready. Starting ranging scan.");
+        Log.debug("Beacon Service is ready. Starting ranging scan.");
 
         beaconManager = new BeaconManager(context);
 
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override public void onBeaconsDiscovered(Region region, List<Beacon> rawBeacons) {
-                Log.d(TAG + "::onCreate()::onBeaconsDiscovered()", "BLE-scan found ranged beacons: " + rawBeacons);
+                Log.debug("BLE-scan found ranged beacons: " + rawBeacons);
 
                 if(!isRunning) {
-                    Log.w(TAG + "::onCreate()::onBeaconsDiscovered()", "got results after stopping beacon manager");
+                    Log.debug("got results after stopping beacon manager");
                     return;
                 }
 
@@ -71,32 +70,32 @@ public class Beaconizer {
     }
 
     public void destroy() {
-        Log.d(TAG + "::destroy()", "Destroying manager..");
+        Log.debug("Destroying manager..");
         isRunning = false;
         beaconManager.disconnect();
     }
 
     public void startScanning() {
         // TODO: handle bluetooth errors
-        Log.d(TAG + "::onStart()", "Starting beacon manager..");
+        Log.debug("Starting beacon manager..");
         assert(isRunning);
         isRunning = true;
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override public void onServiceReady() {
-                Log.d(TAG + "::onStart()", "Beacon Service is ready. Starting ranging scan.");
+                Log.debug("Beacon Service is ready. Starting ranging scan.");
 
                 try {
                     beaconManager.startRanging(BEACON_SEARCH_MASK);
                 } catch (RemoteException e) {
-                    Log.e(TAG + "::onStart()", "BeaconManager couldn't start ranging.", e);
+                    Log.error("BeaconManager couldn't start ranging.", e);
                 }
             }
         });
     }
 
     public void stopScanning() {
-        Log.d(TAG + "::stopScanning()", "Stopping scanner");
+        Log.debug("Stopping scanner");
 
         if(!isRunning)
             return;
@@ -105,7 +104,7 @@ public class Beaconizer {
         try {
             beaconManager.stopRanging(BEACON_SEARCH_MASK);
         } catch (RemoteException e) {
-            Log.e(TAG + "::stopScanning()", "Can't stop Beacon Manager", e);
+            Log.error("Can't stop Beacon Manager", e);
         }
     }
 
@@ -143,7 +142,7 @@ public class Beaconizer {
         String beaconName = getBeaconName(beacon);
         float distance = (float) Utils.computeAccuracy(beacon);
 
-        Log.d("BeaconActivity::getBeaconData()", "  Beacon " + beaconName + " accuracy=" + String.format("%.2f", distance) + " power=" + beacon.getMeasuredPower() + " rssi=" + beacon.getRssi());
+        Log.debug("  Beacon " + beaconName + " accuracy=" + String.format("%.2f", distance) + " power=" + beacon.getMeasuredPower() + " rssi=" + beacon.getRssi());
 
         // beacon data could be stored in the beacon, or pulled from a web-service
         BeaconData data = new BeaconData();

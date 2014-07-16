@@ -3,11 +3,11 @@ package com.augmate.gct_mtg_client.app.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
+import com.augmate.gct_mtg_client.app.Log;
 import com.augmate.gct_mtg_client.app.Room;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -60,7 +60,7 @@ public class RoomSelectionActivity extends TrackedGuiceActivity {
                 finish();
 
             } catch (Exception e) {
-                Log.e(TAG, "Invalid room qr code scanned");
+                Log.error("Invalid room qr code scanned", e);
                 Toast.makeText(this, "This QR code is not a room", Toast.LENGTH_LONG).show();
 
                 IntentIntegrator scanner = new IntentIntegrator(RoomSelectionActivity.this);
@@ -71,7 +71,7 @@ public class RoomSelectionActivity extends TrackedGuiceActivity {
             //launchScanner(3000);
             finish();
         } else {
-            Log.d(TAG, "Match not found for any result");
+            Log.debug("Match not found for any result");
             Toast.makeText(this, "Room not found", Toast.LENGTH_LONG).show();
         }
     }

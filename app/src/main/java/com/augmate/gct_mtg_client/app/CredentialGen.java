@@ -3,7 +3,6 @@ package com.augmate.gct_mtg_client.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 import com.augmate.gct_mtg_client.app.activities.DeviceAuthInfoActivity;
 import com.augmate.gct_mtg_client.app.services.GoogleOAuth2Service;
 import com.augmate.gct_mtg_client.app.services.models.DeviceAuthInfo;
@@ -68,16 +67,16 @@ public class CredentialGen {
     }
 
     public void getAuthorization() {
-        Log.i("com.augmate.auth", "authorizing device");
+        Log.info("authorizing device");
 
         service.getDeviceCode(CLIENT_ID,
                 Joiner.on(' ').join(SCOPES),
                 new Callback<DeviceAuthInfo>() {
                     @Override
                     public void success(DeviceAuthInfo deviceAuthInfo, Response response) {
-                        Log.d("com.augmate.auth", "device code : " + deviceAuthInfo.device_code);
-                        Log.d("com.augmate.auth", "verify url  : " + deviceAuthInfo.verification_url);
-                        Log.d("com.augmate.auth", "user code   : " + deviceAuthInfo.user_code);
+                        Log.debug("device code : " + deviceAuthInfo.device_code);
+                        Log.debug("verify url  : " + deviceAuthInfo.verification_url);
+                        Log.debug("user code   : " + deviceAuthInfo.user_code);
 
                         context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE)
                                 .edit()
@@ -91,7 +90,7 @@ public class CredentialGen {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Log.e("com.augmate.auth", "device auth failed");
+                        Log.error("device auth failed", retrofitError);
                     }
                 });
 
@@ -104,16 +103,16 @@ public class CredentialGen {
                 .getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE)
                 .getString("device_code", "");
 
-        Log.d("com.augmate.auth", "device_code from storage: " + device_code);
+        Log.debug("device_code from storage: " + device_code);
 
         try {
             googleCredential = getStoredCredentials();
 
             if (googleCredential.getRefreshToken() == null) {
-                Log.i("com.augmate.auth", "Getting new tokens, refresh token not stored");
+                Log.info("Getting new tokens, refresh token not stored");
                 googleCredential = getToken(device_code);
             } else {
-                Log.i("com.augmate.auth", "Found tokens, refreshing them");
+                Log.info("Found tokens, refreshing them");
                 // TODO: Refresh token expires, need to handle
                 googleCredential.refreshToken();
             }

@@ -1,6 +1,6 @@
 package com.augmate.gct_mtg_client.app.activities;
 
-import android.util.Log;
+import com.augmate.gct_mtg_client.app.Log;
 import com.augmate.gct_mtg_client.app.Room;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class VoiceRoomDisambiguator {
 
         for (int i = 0; i < voiceResults.size(); ++i) {
             String actualVoiceResult = voiceResults.get(i);
-            Log.d(TAG, "Voice result: " + actualVoiceResult);
+            Log.debug("Voice result: " + actualVoiceResult);
 
             for(Room room : roomExpectedMatches.keySet()) {
                 for (String expectedVoiceResult : roomExpectedMatches.get(room)) {
