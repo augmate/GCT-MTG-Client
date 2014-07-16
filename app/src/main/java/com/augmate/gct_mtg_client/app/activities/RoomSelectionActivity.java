@@ -37,7 +37,7 @@ public class RoomSelectionActivity extends TrackedGuiceActivity {
         walkingInstructionsView.setText(walkingInstructions);
 
         if (savedInstanceState == null)
-            launchScanner(3000);
+            launchScanner(6000);
     }
 
 

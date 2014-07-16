@@ -50,7 +50,7 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             wifiMissingView.setVisibility(View.VISIBLE);
         }else if(savedInstanceState == null) {
             Log.debug("Skipping scanner, recreated activity instance");
-            launchScanner(1000);
+            launchScanner(4000);
         }
     }
 
@@ -80,7 +80,6 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             Analytics.track("GCT Login Scan Time Unsuccessful", new Props(
                     "value", SystemClock.uptimeMillis() - mLoginStartTime
             ));
-            //launchScanner(1000);
             finish();
         }
     }
