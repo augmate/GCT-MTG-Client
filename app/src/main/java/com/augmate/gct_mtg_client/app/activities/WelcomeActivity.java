@@ -8,11 +8,11 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import com.augmate.gct_mtg_client.R;
+import com.augmate.gct_mtg_client.app.Log;
 import com.augmate.gct_mtg_client.app.OnHeadStateReceiver;
 import com.google.inject.Inject;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -22,11 +22,10 @@ import com.segment.android.models.Props;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
-
 @ContentView(R.layout.welcome_screen)
 public class WelcomeActivity extends TrackedGuiceActivity {
     public static final String TAG = "WelcomeActivity";
-
+    
     @InjectView(R.id.wifi_missing)
     TextView wifiMissingView;
 
@@ -41,18 +40,16 @@ public class WelcomeActivity extends TrackedGuiceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        
         instance = this;
-
-        Log.d(TAG, "onCreate");
 
         NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
         if(!networkInfo.isConnected()){
-            Log.d(TAG, "Wifi is not turned on, preventing user from progressing");
+            Log.debug("Wifi is not turned on, preventing user from progressing");
             wifiMissingView.setVisibility(View.VISIBLE);
         }else if(savedInstanceState == null) {
-            Log.d(TAG, "Skipping scanner, recreated activity instance");
+            Log.debug("Skipping scanner, recreated activity instance");
             launchScanner(1000);
         }
     }
@@ -67,6 +64,8 @@ public class WelcomeActivity extends TrackedGuiceActivity {
                     "value", SystemClock.uptimeMillis() - mLoginStartTime
             ));
 
+            Log.debug("Login Scan took " + String.format("%.2f", (float)(SystemClock.uptimeMillis() - mLoginStartTime) / 1000.0f) + " seconds");
+
             String companyName = intentResult.getContents();
 
             Intent i = new Intent(this, RoomSelectionActivity.class);
@@ -75,7 +74,7 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             startActivity(i);
             finish();
 
-            Log.d(TAG, "Scan completed successfully & activity finished");
+            Log.debug("Scan completed successfully & activity finished");
         }
         else if(resultCode == RESULT_CANCELED) {
             Analytics.track("GCT Login Scan Time Unsuccessful", new Props(
@@ -116,7 +115,7 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             @Override
             public void run() {
                 mLoginStartTime = SystemClock.uptimeMillis();
-                Log.d(TAG, "Starting a new scanner");
+                Log.debug("Starting a new scanner");
                 new IntentIntegrator(WelcomeActivity.this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
             }
         }, delay);

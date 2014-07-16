@@ -2,17 +2,21 @@ package com.augmate.gct_mtg_client.app.activities;
 
 import android.os.Bundle;
 import com.segment.android.Analytics;
+import org.apache.log4j.Logger;
 import roboguice.activity.RoboActivity;
 
 /**
  * TrackedActivity for Segment.io analytics to work with Guice
+ * Also includes a log4j style LogEntries logger
  */
 public abstract class TrackedGuiceActivity extends RoboActivity {
-
+    protected Logger logger;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Analytics.onCreate(this);
+        logger = com.augmate.gct_mtg_client.app.Log.getLogger(this);
     }
 
     @Override
