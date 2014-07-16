@@ -7,16 +7,16 @@ import roboguice.activity.RoboActivity;
 
 /**
  * TrackedActivity for Segment.io analytics to work with Guice
- * Also includes a log4j style LogEntries logger
+ * Also includes a log4j style LogEntries Log
  */
 public abstract class TrackedGuiceActivity extends RoboActivity {
-    protected Logger logger;
+    protected Logger Log;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Analytics.onCreate(this);
-        logger = com.augmate.gct_mtg_client.app.Log.getLogger(this);
+        Log = com.augmate.gct_mtg_client.app.Log.getLogger(this);
     }
 
     @Override

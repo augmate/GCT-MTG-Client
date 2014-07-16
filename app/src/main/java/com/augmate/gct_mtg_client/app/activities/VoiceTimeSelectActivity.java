@@ -98,7 +98,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             return;
         }
         */
-        Log.debug( "resultCode = " + resultCode);
+        Log.debug("resultCode = " + resultCode);
 
         if (resultCode == RESULT_OK) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 import com.segment.android.Analytics;
 
 public class NetworkConnectivityReceiver extends BroadcastReceiver {
@@ -18,16 +17,16 @@ public class NetworkConnectivityReceiver extends BroadcastReceiver {
         NetworkInfo networkInfo =
                 intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 
-        Log.i(TAG, "=======================================");
-        Log.i(TAG, "State: " + networkInfo.getState());
-        Log.i(TAG, "Detailed State: " + networkInfo.getDetailedState());
-        Log.i(TAG, "Is Connected?: " + networkInfo.isConnected());
-        Log.i(TAG, "Is Available?: " + networkInfo.isAvailable());
-        Log.i(TAG, "Is Connecting?: " + networkInfo.isConnectedOrConnecting());
-        Log.i(TAG, "Is failover?: " + networkInfo.isFailover());
-        Log.i(TAG, "Type name: " + networkInfo.getTypeName());
-        Log.i(TAG, "Extra info: " + networkInfo.getExtraInfo());
-        Log.i(TAG, "=======================================");
+        Log.debug("=======================================");
+        Log.debug("State: " + networkInfo.getState());
+        Log.debug("Detailed State: " + networkInfo.getDetailedState());
+        Log.debug("Is Connected?: " + networkInfo.isConnected());
+        Log.debug("Is Available?: " + networkInfo.isAvailable());
+        Log.debug("Is Connecting?: " + networkInfo.isConnectedOrConnecting());
+        Log.debug("Is failover?: " + networkInfo.isFailover());
+        Log.debug("Type name: " + networkInfo.getTypeName());
+        Log.debug("Extra info: " + networkInfo.getExtraInfo());
+        Log.debug("=======================================");
 
         Analytics.track("GCT - Network State " + networkInfo.getState());
     }

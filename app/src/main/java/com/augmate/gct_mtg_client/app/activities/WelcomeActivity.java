@@ -41,6 +41,7 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         
+        Log.debug("Started at the Welcome Screen");
         instance = this;
 
         NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);

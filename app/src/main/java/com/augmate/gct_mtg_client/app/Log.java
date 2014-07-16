@@ -17,15 +17,17 @@ public class Log {
         // not super random or collision free
         String sessionId = Long.toString(Math.abs(java.util.UUID.randomUUID().getLeastSignificantBits()), 36);
         
-        PatternLayout pl = new PatternLayout("%d{ABSOLUTE} ["+sessionId+"] [" + deviceId + "] [%t] %C{1}::%M(); %m%n");
-
         LogentriesAppender logentriesAppender = new LogentriesAppender();
         logentriesAppender.setToken("c3a45763-9854-43cc-838a-7a1b71418c6c");
         logentriesAppender.setDebug(false);
-        logentriesAppender.setLayout(pl);
+        logentriesAppender.setLayout(new PatternLayout("%d{ISO8601} #"+sessionId+"# (" + deviceId + ") [%t] %C{1}::%M(); %m%n"));
         logentriesAppender.setSsl(false);
 
+        AndroidDbgAppender localAppender = new AndroidDbgAppender();
+        localAppender.setLayout(new PatternLayout("#"+sessionId+"# (" + deviceId + ") [%t] %C{1}::%M(); %m%n"));
+        
         Logger lgr = Logger.getRootLogger();
+        lgr.addAppender(localAppender);
         lgr.addAppender(logentriesAppender);
         
         // TODO: add a local appender
@@ -42,7 +44,7 @@ public class Log {
             String deviceId = "N/A";
 
             if (ctx == null) {
-                android.util.Log.d("Log", "getLogger() called without a ctx; creating logger without device-id");
+                android.util.Log.d("Log", "getLogger() called without a ctx; creating Log without device-id");
             } else {
                 deviceId = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
                 android.util.Log.d("Log", "getLogger() found device-id: " + deviceId);
@@ -52,6 +54,10 @@ public class Log {
         }
 
         return loggerInstance;
+    }
+    
+    public static void setupApplication(Context ctx) {
+        getLogger(ctx);
     }
     
     public static void debug(String msg) {
