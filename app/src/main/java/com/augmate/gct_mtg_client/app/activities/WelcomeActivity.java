@@ -24,8 +24,6 @@ import roboguice.inject.InjectView;
 
 @ContentView(R.layout.welcome_screen)
 public class WelcomeActivity extends TrackedGuiceActivity {
-    public static final String TAG = "WelcomeActivity";
-    
     @InjectView(R.id.wifi_missing)
     TextView wifiMissingView;
 
@@ -65,14 +63,11 @@ public class WelcomeActivity extends TrackedGuiceActivity {
                     "value", SystemClock.uptimeMillis() - mLoginStartTime
             ));
 
-            Log.debug("Login Scan took " + String.format("%.2f", (float)(SystemClock.uptimeMillis() - mLoginStartTime) / 1000.0f) + " seconds");
+            Log.debug("Login Scan took " + String.format("%.2f", (float) (SystemClock.uptimeMillis() - mLoginStartTime) / 1000.0f) + " seconds");
 
             String companyName = intentResult.getContents();
 
-            Intent i = new Intent(this, RoomSelectionActivity.class);
-            i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
-
-            startActivity(i);
+            launchRoomSelectionActivity(companyName);
             finish();
 
             Log.debug("Scan completed successfully & activity finished");
@@ -119,5 +114,11 @@ public class WelcomeActivity extends TrackedGuiceActivity {
                 new IntentIntegrator(WelcomeActivity.this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
             }
         }, delay);
+    }
+
+    private void launchRoomSelectionActivity(String companyName) {
+        Intent i = new Intent(this, RoomSelectionActivity.class);
+        i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
+        startActivity(i);
     }
 }

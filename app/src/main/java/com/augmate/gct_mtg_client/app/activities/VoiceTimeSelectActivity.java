@@ -102,19 +102,17 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
         if (resultCode == RESULT_OK) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            Log.debug( "Got " + results.size() + " results from Speech API");
+            Log.debug("Got " + results.size() + " results from Speech API");
 
             String voiceString = results.get(0);
 
             BookingTime bookingTime = VoiceTimeDisambiguator.match(voiceString, BookingTime.asStringList());
 
-            Log.debug( "Booking time recognized as: " + bookingTime);
+            Log.debug("Booking time recognized as: " + bookingTime);
             if (bookingTime != BookingTime.INVALID) {
                 if(bookingTime == BookingTime.NONE) {
-                    Log.debug( "NONE recognized, going back to room selection");
-                    Intent i = new Intent(this, RoomSelectionActivity.class);
-                    i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
-                    startActivity(i);
+                    Log.debug("NONE recognized, going back to room selection");
+                    launchRoomSelectionActivity();
                     finish();
                     return;
                 }else if (availabilities.contains(bookingTime)) {
@@ -144,9 +142,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             }
         }
         else if (resultCode == RESULT_CANCELED) {
-            Intent i = new Intent(this, RoomSelectionActivity.class);
-            i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
-            startActivity(i);
+            launchRoomSelectionActivity();
             finish();
         } else {
             // speech-api didn't recognize anything. restart
@@ -154,14 +150,20 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
 
             // user said None, or whatever they said wasn't recognized
-            Log.debug( "Voice finished without positive user response (yes, etc)");
+            Log.debug("Voice finished without positive user response (yes, etc)");
             onRecieveAvailabilities(availabilities);
         }
+    }
+
+    private void launchRoomSelectionActivity() {
+        Intent i = new Intent(this, RoomSelectionActivity.class);
+        i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
+        startActivity(i);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.debug( "Activity being destroyed");
+        Log.debug("Activity being destroyed");
     }
 }
