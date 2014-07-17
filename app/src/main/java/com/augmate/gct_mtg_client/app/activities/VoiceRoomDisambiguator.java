@@ -1,6 +1,6 @@
 package com.augmate.gct_mtg_client.app.activities;
 
-import com.augmate.gct_mtg_client.app.Log;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.augmate.gct_mtg_client.app.Room;
 
 import java.util.ArrayList;
@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public class VoiceRoomDisambiguator {
-
-    public static final String TAG = "RoomDisambiguator";
 
     /**
      * given results from speech-api, find the right room, given a dictionary of possible choices

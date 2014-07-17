@@ -1,5 +1,7 @@
 package com.augmate.gct_mtg_client.app;
 
+import com.augmate.gct_mtg_client.app.utils.Log;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,6 @@ public enum BookingTime {
     NOW("now", 0),
     NONE("none",-1),
     INVALID("invalid", -2);
-    public static final String TAG = "BookingTime";
 
     public final String displayName;
     public final int hour;

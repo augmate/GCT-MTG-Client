@@ -5,7 +5,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.Beaconizer;
-import com.augmate.gct_mtg_client.app.Log;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.augmate.gct_mtg_client.app.tasks.IReceiveRoomsCallbacks;
 import com.augmate.gct_mtg_client.app.RoomOption;
 import com.segment.android.TrackedActivity;

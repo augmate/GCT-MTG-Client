@@ -7,6 +7,7 @@ import com.augmate.gct_mtg_client.app.activities.DeviceAuthInfoActivity;
 import com.augmate.gct_mtg_client.app.services.GoogleOAuth2Service;
 import com.augmate.gct_mtg_client.app.services.models.DeviceAuthInfo;
 import com.augmate.gct_mtg_client.app.services.models.GoogleTokenCredential;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.json.gson.GsonFactory;

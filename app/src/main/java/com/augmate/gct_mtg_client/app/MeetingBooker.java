@@ -1,5 +1,6 @@
 package com.augmate.gct_mtg_client.app;
 
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
 import org.joda.time.DateTime;

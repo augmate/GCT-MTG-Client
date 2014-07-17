@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import com.augmate.gct_mtg_client.R;
-import com.augmate.gct_mtg_client.app.Log;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.augmate.gct_mtg_client.app.OnHeadStateReceiver;
 import com.google.inject.Inject;
 import com.google.zxing.integration.android.IntentIntegrator;

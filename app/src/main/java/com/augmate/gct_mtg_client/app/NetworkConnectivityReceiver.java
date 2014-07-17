@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.segment.android.Analytics;
 
 public class NetworkConnectivityReceiver extends BroadcastReceiver {
