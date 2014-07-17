@@ -10,8 +10,6 @@ import com.segment.android.Analytics;
 
 public class NetworkConnectivityReceiver extends BroadcastReceiver {
 
-    public static final String TAG = "NetworkConnectivityReceiver";
-
     @Override
     public void onReceive(Context context, Intent intent) {
 

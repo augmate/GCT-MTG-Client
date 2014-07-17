@@ -25,7 +25,6 @@ import java.util.List;
 public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements VoiceTimeSelectActivityCallbacks {
 
     public static final String ROOM_NAME_EXTRA = "ROOM_NAME_EXTRA";
-    public static final String TAG = VoiceTimeSelectActivity.class.getName();
     public static final int VOICE_RECOGNIZER_REQUEST_CODE = 101;
     public static final String COMPANY_NAME_EXTRA = "COMPANY_NAME_EXTRA";
 
@@ -91,13 +90,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
         Analytics.track("GCT - Voice Raw Result Time", new Props(
                 "value", SystemClock.uptimeMillis() - voiceTimeRawInputStart
         ));
-        /*
-        if (!OnHeadStateReceiver.IsOnHead) {
-            Log.debug( "Voice Activity Paused, Ending voice recognition loop.");
-            //finish();
-            return;
-        }
-        */
+
         Log.debug("resultCode = " + resultCode);
 
         if (resultCode == RESULT_OK) {

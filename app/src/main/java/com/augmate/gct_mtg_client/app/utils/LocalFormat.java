@@ -2,11 +2,9 @@ package com.augmate.gct_mtg_client.app.utils;
 
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
-import org.joda.time.format.DateTimeFormat;
 
 public class LocalFormat extends Layout
 {
-    private static final String TAG = LocalFormat.class.getName();
     private String sessionId;
     private String deviceId;
     
