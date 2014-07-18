@@ -3,6 +3,7 @@ package com.augmate.gct_mtg_client.app;
 import android.content.Context;
 import android.os.RemoteException;
 import com.augmate.gct_mtg_client.app.tasks.IReceiveRoomsCallbacks;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
@@ -16,7 +17,6 @@ import java.util.List;
 public class Beaconizer {
 
     private static final Region BEACON_SEARCH_MASK = new Region("rid", null, null, null);
-    public static final String TAG = "Beaconizer";
     private BeaconManager beaconManager;
     boolean isRunning = false;
 

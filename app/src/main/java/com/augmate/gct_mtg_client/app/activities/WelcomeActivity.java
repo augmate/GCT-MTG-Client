@@ -11,9 +11,10 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import com.augmate.gct_mtg_client.BuildConfig;
 import com.augmate.gct_mtg_client.R;
-import com.augmate.gct_mtg_client.app.Log;
 import com.augmate.gct_mtg_client.app.OnHeadStateReceiver;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.google.inject.Inject;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -24,34 +25,35 @@ import roboguice.inject.InjectView;
 
 @ContentView(R.layout.welcome_screen)
 public class WelcomeActivity extends TrackedGuiceActivity {
-    public static final String TAG = "WelcomeActivity";
-    
     @InjectView(R.id.wifi_missing)
     TextView wifiMissingView;
+    @InjectView(R.id.dev_build_view)
+    TextView devBuildView;
 
     private long mLoginStartTime = 0;
 
     @Inject
     ConnectivityManager connectivityManager;
 
-    public static WelcomeActivity instance;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        
         Log.debug("Started at the Welcome Screen");
-        instance = this;
 
-        NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo cellInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE); //for emulator
 
-        if(!networkInfo.isConnected()){
+        if(!wifiInfo.isConnected() && !cellInfo.isConnected()){
             Log.debug("Wifi is not turned on, preventing user from progressing");
             wifiMissingView.setVisibility(View.VISIBLE);
         }else if(savedInstanceState == null) {
             Log.debug("Skipping scanner, recreated activity instance");
             launchScanner(4000);
+        }
+
+        if(BuildConfig.DEBUG){
+            devBuildView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -65,14 +67,11 @@ public class WelcomeActivity extends TrackedGuiceActivity {
                     "value", SystemClock.uptimeMillis() - mLoginStartTime
             ));
 
-            Log.debug("Login Scan took " + String.format("%.2f", (float)(SystemClock.uptimeMillis() - mLoginStartTime) / 1000.0f) + " seconds");
+            Log.debug("Login Scan took " + String.format("%.2f", (float) (SystemClock.uptimeMillis() - mLoginStartTime) / 1000.0f) + " seconds");
 
             String companyName = intentResult.getContents();
 
-            Intent i = new Intent(this, RoomSelectionActivity.class);
-            i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
-
-            startActivity(i);
+            launchRoomSelectionActivity(companyName);
             finish();
 
             Log.debug("Scan completed successfully & activity finished");
@@ -119,5 +118,11 @@ public class WelcomeActivity extends TrackedGuiceActivity {
                 new IntentIntegrator(WelcomeActivity.this).initiateScan(IntentIntegrator.QR_CODE_TYPES);
             }
         }, delay);
+    }
+
+    private void launchRoomSelectionActivity(String companyName) {
+        Intent i = new Intent(this, RoomSelectionActivity.class);
+        i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
+        startActivity(i);
     }
 }

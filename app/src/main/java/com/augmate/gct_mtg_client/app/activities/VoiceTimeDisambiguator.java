@@ -1,14 +1,12 @@
 package com.augmate.gct_mtg_client.app.activities;
 
 import com.augmate.gct_mtg_client.app.BookingTime;
-import com.augmate.gct_mtg_client.app.Log;
+import com.augmate.gct_mtg_client.app.utils.Log;
 
 import java.util.List;
 import java.util.Map;
 
 public class VoiceTimeDisambiguator {
-
-    public static final String TAG = "VoiceDisambiguator";
 
     /**
      * given results from speech-api, find the right calendar time slot, given a dictionary of possible choices

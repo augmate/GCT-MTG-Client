@@ -7,8 +7,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
-import com.augmate.gct_mtg_client.app.Log;
 import com.augmate.gct_mtg_client.app.Room;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import roboguice.inject.ContentView;
@@ -19,7 +19,6 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.room_selection)
 public class RoomSelectionActivity extends TrackedGuiceActivity {
     public static final String COMPANY_NAME_EXTRA = "COMPANY_NAME_EXTRA";
-    public static final String TAG = "RoomSelectionActivity";
 
     @InjectView(R.id.walking_instructions)
     TextView walkingInstructionsView;

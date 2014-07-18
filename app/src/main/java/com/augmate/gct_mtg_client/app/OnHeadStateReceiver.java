@@ -1,14 +1,9 @@
 package com.augmate.gct_mtg_client.app;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
-import android.os.Bundle;
-import com.augmate.gct_mtg_client.app.activities.WelcomeActivity;
-import com.segment.android.Analytics;
+import com.augmate.gct_mtg_client.app.utils.Log;
 
 public class OnHeadStateReceiver extends BroadcastReceiver {
     public static Boolean IsOnHead = true;

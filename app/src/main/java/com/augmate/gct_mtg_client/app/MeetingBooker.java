@@ -1,5 +1,6 @@
 package com.augmate.gct_mtg_client.app;
 
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
 import org.joda.time.DateTime;
@@ -13,7 +14,6 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class MeetingBooker {
 
-    public static final String TAG = "MeetingBooker";
     public static final int LAST_BOOKABLE_SLOT = 18;
     private static Map<Room, String> CALENDAR_IDS = new HashMap<Room, String>();
 

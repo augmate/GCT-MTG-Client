@@ -8,10 +8,10 @@ import android.view.WindowManager;
 import android.widget.Toast;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.BookingTime;
-import com.augmate.gct_mtg_client.app.Log;
 import com.augmate.gct_mtg_client.app.Room;
 import com.augmate.gct_mtg_client.app.tasks.CheckRoomAvailabilityTask;
 import com.augmate.gct_mtg_client.app.tasks.VoiceTimeSelectActivityCallbacks;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
 import com.segment.android.Analytics;
 import com.segment.android.models.Props;
@@ -25,7 +25,6 @@ import java.util.List;
 public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements VoiceTimeSelectActivityCallbacks {
 
     public static final String ROOM_NAME_EXTRA = "ROOM_NAME_EXTRA";
-    public static final String TAG = VoiceTimeSelectActivity.class.getName();
     public static final int VOICE_RECOGNIZER_REQUEST_CODE = 101;
     public static final String COMPANY_NAME_EXTRA = "COMPANY_NAME_EXTRA";
 
@@ -95,30 +94,22 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
         Analytics.track("GCT - Voice Raw Result Time", new Props(
                 "value", SystemClock.uptimeMillis() - voiceTimeRawInputStart
         ));
-        /*
-        if (!OnHeadStateReceiver.IsOnHead) {
-            Log.debug( "Voice Activity Paused, Ending voice recognition loop.");
-            //finish();
-            return;
-        }
-        */
+
         Log.debug("resultCode = " + resultCode);
 
         if (resultCode == RESULT_OK) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            Log.debug( "Got " + results.size() + " results from Speech API");
+            Log.debug("Got " + results.size() + " results from Speech API");
 
             String voiceString = results.get(0);
 
             BookingTime bookingTime = VoiceTimeDisambiguator.match(voiceString, BookingTime.asStringList());
 
-            Log.debug( "Booking time recognized as: " + bookingTime);
+            Log.debug("Booking time recognized as: " + bookingTime);
             if (bookingTime != BookingTime.INVALID) {
                 if(bookingTime == BookingTime.NONE) {
-                    Log.debug( "NONE recognized, going back to room selection");
-                    Intent i = new Intent(this, RoomSelectionActivity.class);
-                    i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
-                    startActivity(i);
+                    Log.debug("NONE recognized, going back to room selection");
+                    launchRoomSelectionActivity();
                     finish();
                     return;
                 }else if (availabilities.contains(bookingTime)) {
@@ -148,9 +139,7 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             }
         }
         else if (resultCode == RESULT_CANCELED) {
-            Intent i = new Intent(this, RoomSelectionActivity.class);
-            i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
-            startActivity(i);
+            launchRoomSelectionActivity();
             finish();
         } else {
             // speech-api didn't recognize anything. restart
@@ -158,14 +147,20 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
 
             // user said None, or whatever they said wasn't recognized
-            Log.debug( "Voice finished without positive user response (yes, etc)");
+            Log.debug("Voice finished without positive user response (yes, etc)");
             onRecieveAvailabilities(availabilities);
         }
+    }
+
+    private void launchRoomSelectionActivity() {
+        Intent i = new Intent(this, RoomSelectionActivity.class);
+        i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
+        startActivity(i);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.debug( "Activity being destroyed");
+        Log.debug("Activity being destroyed");
     }
 }
