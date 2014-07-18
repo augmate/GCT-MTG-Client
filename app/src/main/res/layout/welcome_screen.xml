@@ -30,4 +30,14 @@
         android:layout_marginTop="30dp"
         android:src="@android:drawable/ic_menu_camera"/>
 
+    <TextView
+        android:id="@+id/dev_build_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="DEV BUILD"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="36sp"
+        android:visibility="gone"
+        />
 </LinearLayout>

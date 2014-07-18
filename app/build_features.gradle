@@ -1,18 +1,15 @@
-android {
-    buildTypes {
+android.buildTypes {
 
-        def BOOLEAN = "boolean"
-        def FEATURE_BEACONS = "FEATURE_BEACONS"
-        def TRUE = "true"
-        def FALSE = "true"
+    def BOOLEAN = "boolean"
+    def FEATURE_BEACONS = "FEATURE_BEACONS"
+    def TRUE = "true"
+    def FALSE = "true"
 
-        debug {
-            buildConfigField BOOLEAN, FEATURE_BEACONS, TRUE
-        }
+    debug {
+        buildConfigField BOOLEAN, FEATURE_BEACONS, TRUE
+    }
 
-        client {
-            buildConfigField BOOLEAN, FEATURE_BEACONS, FALSE
-        }
-
+    release {
+        buildConfigField BOOLEAN, FEATURE_BEACONS, FALSE
     }
 }

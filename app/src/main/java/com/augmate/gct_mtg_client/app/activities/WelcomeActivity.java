@@ -11,9 +11,10 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import com.augmate.gct_mtg_client.BuildConfig;
 import com.augmate.gct_mtg_client.R;
-import com.augmate.gct_mtg_client.app.utils.Log;
 import com.augmate.gct_mtg_client.app.OnHeadStateReceiver;
+import com.augmate.gct_mtg_client.app.utils.Log;
 import com.google.inject.Inject;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -26,30 +27,33 @@ import roboguice.inject.InjectView;
 public class WelcomeActivity extends TrackedGuiceActivity {
     @InjectView(R.id.wifi_missing)
     TextView wifiMissingView;
+    @InjectView(R.id.dev_build_view)
+    TextView devBuildView;
 
     private long mLoginStartTime = 0;
 
     @Inject
     ConnectivityManager connectivityManager;
 
-    public static WelcomeActivity instance;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        
         Log.debug("Started at the Welcome Screen");
-        instance = this;
 
-        NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo cellInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE); //for emulator
 
-        if(!networkInfo.isConnected()){
+        if(!wifiInfo.isConnected() && !cellInfo.isConnected()){
             Log.debug("Wifi is not turned on, preventing user from progressing");
             wifiMissingView.setVisibility(View.VISIBLE);
         }else if(savedInstanceState == null) {
             Log.debug("Skipping scanner, recreated activity instance");
             launchScanner(4000);
+        }
+
+        if(BuildConfig.DEBUG){
+            devBuildView.setVisibility(View.VISIBLE);
         }
     }
 
