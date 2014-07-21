@@ -62,8 +62,9 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
         //TODO: Fix this cache
         this.availabilities = availabilities;
-        Log.debug("Received " + availabilities.size() + " availabilities");
-        if (!availabilities.isEmpty()) {
+        if(availabilities == null)
+            finish();
+        else if (!availabilities.isEmpty()) {
             //String availableTimesString = Joiner.on(", ").join(availabilities);
             //String roomPrompt = String.format("%s is available for:\n\n%s\n\n(say 'none' to go back)", requestedRoom.displayName, availableTimesString);
             String roomPrompt = processAvailabilities(availabilities);
