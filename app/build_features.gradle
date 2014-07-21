@@ -3,7 +3,7 @@ android.buildTypes {
     def BOOLEAN = "boolean"
     def FEATURE_BEACONS = "FEATURE_BEACONS"
     def TRUE = "true"
-    def FALSE = "true"
+    def FALSE = "false"
 
     debug {
         buildConfigField BOOLEAN, FEATURE_BEACONS, TRUE
