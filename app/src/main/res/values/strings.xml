@@ -12,5 +12,7 @@
     <string name="loading_room_availabilities">Loading room availabilities...</string>
     <string name="connect_to_wifi">Please connect to Wi-Fi</string>
     <string name="no_times_available">Sorry, there are no times left for this room. Please try another.</string>
+    <string name="scanning_room">Scanning...</string>
+    <string name="tap_to_select">Tap to select room</string>
 
 </resources>
