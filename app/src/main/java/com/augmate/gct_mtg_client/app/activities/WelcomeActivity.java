@@ -11,7 +11,7 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import com.augmate.gct_mtg_client.BuildConfig;
+import com.augmate.gct_mtg_client.BuildVariants;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.OnHeadStateReceiver;
 import com.augmate.gct_mtg_client.app.utils.Log;
@@ -22,6 +22,8 @@ import com.segment.android.Analytics;
 import com.segment.android.models.Props;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
+
+import static com.augmate.gct_mtg_client.BuildConfig.BUILD_TYPE;
 
 @ContentView(R.layout.welcome_screen)
 public class WelcomeActivity extends TrackedGuiceActivity {
@@ -57,7 +59,9 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             launchScanner(4000);
         }
 
-
+        if(BUILD_TYPE.equals(BuildVariants.DEBUG)){
+            devBuildView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
