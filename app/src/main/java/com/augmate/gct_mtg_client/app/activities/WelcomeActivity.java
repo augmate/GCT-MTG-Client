@@ -44,6 +44,11 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo cellInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE); //for emulator
 
+        if(true){//BuildConfig.DEBUG){
+            Log.debug("DEBUGGING");
+            devBuildView.setVisibility(View.VISIBLE);
+        }
+
         if(!wifiInfo.isConnected() && !cellInfo.isConnected()){
             Log.debug("Wifi is not turned on, preventing user from progressing");
             wifiMissingView.setVisibility(View.VISIBLE);
@@ -52,9 +57,7 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             launchScanner(4000);
         }
 
-        if(BuildConfig.DEBUG){
-            devBuildView.setVisibility(View.VISIBLE);
-        }
+
     }
 
     @Override

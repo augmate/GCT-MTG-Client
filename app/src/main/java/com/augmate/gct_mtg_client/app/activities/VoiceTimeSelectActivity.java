@@ -62,17 +62,14 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
 
         //TODO: Fix this cache
         this.availabilities = availabilities;
-
+        Log.debug("Received " + availabilities.size() + " availabilities");
         if (!availabilities.isEmpty()) {
-            String availableTimesString = Joiner.on(", ").join(availabilities);
-
-            String roomPrompt = String.format("%s is available for:\n\n%s\n\n(say 'none' to go back)", requestedRoom.displayName, availableTimesString);
-
+            //String availableTimesString = Joiner.on(", ").join(availabilities);
+            //String roomPrompt = String.format("%s is available for:\n\n%s\n\n(say 'none' to go back)", requestedRoom.displayName, availableTimesString);
+            String roomPrompt = processAvailabilities(availabilities);
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT, roomPrompt);
-
-            Log.debug("Requesting time select via speech-recognition..");
 
             // we track a new voice input step every time
             voiceTimeRawInputStart = SystemClock.uptimeMillis();
@@ -85,6 +82,31 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
             startActivity(i);
             finish();
         }
+    }
+
+    private String processAvailabilities(List<BookingTime> availabilities) {
+        String pmTimes = null;
+        String amTimes = null;
+        String returnString = "None";
+        int spacer = 0;
+        for(BookingTime bt : availabilities){
+            if(bt.toString().contains("pm"))
+                pmTimes = (pmTimes == null) ? bt.toString() : pmTimes.concat(" " + bt.toString());
+            else if(bt.toString().contains("am"))
+                amTimes = (amTimes == null) ? bt.toString() : amTimes.concat(" " + bt.toString());
+        }
+        if(pmTimes != null) {
+            spacer++;
+            returnString = returnString.concat("\n" + pmTimes);
+        }
+        if(amTimes != null) {
+            spacer++;
+            returnString = returnString.concat("\n" + amTimes);
+        }
+        if(availabilities.contains(BookingTime.NOW))
+            returnString = returnString.concat("\n" + "Now");
+        returnString = (spacer == 2) ? returnString.concat("\n\n") : returnString.concat("\n\n\n");
+        return returnString.concat("\t\t\t\t\t\t\t"+"Choose a time");
     }
 
     @Override
@@ -122,7 +144,6 @@ public class VoiceTimeSelectActivity extends TrackedGuiceActivity implements Voi
                     intent.putExtra(BookingActivity.ROOM_NUMBER_EXTRA, requestedRoom);
                     intent.putExtra(BookingActivity.BOOKING_TIME_EXTRA, bookingTime);
                     intent.putExtra(BookingActivity.COMPANY_NAME_EXTRA, companyName);
-
                     startActivity(intent);
                     finish();
                     return;
