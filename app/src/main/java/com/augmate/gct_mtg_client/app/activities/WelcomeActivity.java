@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import com.augmate.gct_mtg_client.BuildConfig;
 import com.augmate.gct_mtg_client.BuildVariants;
 import com.augmate.gct_mtg_client.R;
 import com.augmate.gct_mtg_client.app.OnHeadStateReceiver;
@@ -46,20 +47,15 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo cellInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE); //for emulator
 
-        if(true){//BuildConfig.DEBUG){
-            Log.debug("DEBUGGING");
-            devBuildView.setVisibility(View.VISIBLE);
-        }
-
-        if(!wifiInfo.isConnected() && !cellInfo.isConnected()){
+        if (!wifiInfo.isConnected() && !cellInfo.isConnected()) {
             Log.debug("Wifi is not turned on, preventing user from progressing");
             wifiMissingView.setVisibility(View.VISIBLE);
-        }else if(savedInstanceState == null) {
+        } else if (savedInstanceState == null) {
             Log.debug("Skipping scanner, recreated activity instance");
             launchScanner(4000);
         }
 
-        if(BUILD_TYPE.equals(BuildVariants.DEBUG)){
+        if (BUILD_TYPE.equals(BuildVariants.DEBUG)) {
             devBuildView.setVisibility(View.VISIBLE);
         }
     }
@@ -68,7 +64,7 @@ public class WelcomeActivity extends TrackedGuiceActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
-        if(resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
 
             Analytics.track("GCT Login Scan Time Success", new Props(
                     "value", SystemClock.uptimeMillis() - mLoginStartTime
@@ -78,12 +74,15 @@ public class WelcomeActivity extends TrackedGuiceActivity {
 
             String companyName = intentResult.getContents();
 
-            launchRoomSelectionActivity(companyName);
+            if (BuildConfig.FEATURE_BEACONS) {
+                launchBeaconRoomSelectionActivity();
+            } else {
+                launchRoomSelectionActivity(companyName);
+            }
             finish();
 
             Log.debug("Scan completed successfully & activity finished");
-        }
-        else if(resultCode == RESULT_CANCELED) {
+        } else if (resultCode == RESULT_CANCELED) {
             Analytics.track("GCT Login Scan Time Unsuccessful", new Props(
                     "value", SystemClock.uptimeMillis() - mLoginStartTime
             ));
@@ -91,9 +90,8 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         }
     }
 
-    public void onResume()
-    {
-        ComponentName component=new ComponentName(this, OnHeadStateReceiver.class);
+    public void onResume() {
+        ComponentName component = new ComponentName(this, OnHeadStateReceiver.class);
         getPackageManager()
                 .setComponentEnabledSetting(component,
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
@@ -101,9 +99,8 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         super.onResume();
     }
 
-    public void onPause()
-    {
-        ComponentName component=new ComponentName(this, OnHeadStateReceiver.class);
+    public void onPause() {
+        ComponentName component = new ComponentName(this, OnHeadStateReceiver.class);
         getPackageManager()
                 .setComponentEnabledSetting(component,
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
@@ -111,12 +108,12 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         super.onPause();
     }
 
-    public void onNewIntent(Intent intent){
-        if(intent.getBooleanExtra("Close", false))
+    public void onNewIntent(Intent intent) {
+        if (intent.getBooleanExtra("Close", false))
             finish();
     }
 
-    private void launchScanner(long delay){
+    private void launchScanner(long delay) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -130,6 +127,11 @@ public class WelcomeActivity extends TrackedGuiceActivity {
     private void launchRoomSelectionActivity(String companyName) {
         Intent i = new Intent(this, RoomSelectionActivity.class);
         i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
+        startActivity(i);
+    }
+
+    private void launchBeaconRoomSelectionActivity() {
+        Intent i = new Intent(this, BeaconRoomSelectionActivity.class);
         startActivity(i);
     }
 }

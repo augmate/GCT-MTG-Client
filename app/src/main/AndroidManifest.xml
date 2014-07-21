@@ -42,7 +42,7 @@
         <activity android:name=".app.activities.VoiceTimeSelectActivity"/>
         <activity android:name=".app.activities.RoomSelectionActivity"/>
         <activity android:name=".app.activities.DeviceAuthInfoActivity"/>
-        <activity android:name=".app.activities.BeaconActivity"/>
+        <activity android:name=".app.activities.BeaconRoomSelectionActivity"/>
 
         <service
             android:name="com.estimote.sdk.service.BeaconService"

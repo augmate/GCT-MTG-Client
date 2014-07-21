@@ -12,7 +12,7 @@ import com.segment.android.TrackedActivity;
 
 import java.util.List;
 
-public class BeaconActivity extends TrackedActivity implements IReceiveRoomsCallbacks {
+public class BeaconRoomSelectionActivity extends TrackedActivity implements IReceiveRoomsCallbacks {
     Beaconizer newBeaconManager;
 
     @Override
