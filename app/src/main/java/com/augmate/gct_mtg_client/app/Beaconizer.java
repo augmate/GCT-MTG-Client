@@ -150,14 +150,11 @@ public class Beaconizer {
         data.confidence = 1;
 
         if (beaconName.equals("purple")) {
-            data.rooms.add("Room 1");
-            data.rooms.add("Room 2");
+            data.rooms.add("ROOM_1");
         } else if (beaconName.equals("light-blue")) {
-            data.rooms.add("Garage");
-            data.rooms.add("Room 3");
+            data.rooms.add("GARAGE");
         } else if (beaconName.equals("light-green")) {
-            data.rooms.add("Room 4");
-            data.rooms.add("Room 5");
+            data.rooms.add("ROOM_3");
         }
 
         return data;

@@ -75,7 +75,7 @@ public class WelcomeActivity extends TrackedGuiceActivity {
             String companyName = intentResult.getContents();
 
             if (BuildConfig.FEATURE_BEACONS) {
-                launchBeaconRoomSelectionActivity();
+                launchBeaconRoomSelectionActivity(companyName);
             } else {
                 launchRoomSelectionActivity(companyName);
             }
@@ -130,8 +130,9 @@ public class WelcomeActivity extends TrackedGuiceActivity {
         startActivity(i);
     }
 
-    private void launchBeaconRoomSelectionActivity() {
+    private void launchBeaconRoomSelectionActivity(String companyName) {
         Intent i = new Intent(this, BeaconRoomSelectionActivity.class);
+        i.putExtra(RoomSelectionActivity.COMPANY_NAME_EXTRA, companyName);
         startActivity(i);
     }
 }
